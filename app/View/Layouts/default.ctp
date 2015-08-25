@@ -14,7 +14,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$cakeDescription = __d('cake_dev', 'CakePHP: the rapid development php framework');
+$cakeDescription = _('Epi SNP');
 $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 ?>
 <!DOCTYPE html>
@@ -27,37 +27,43 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	</title>
 	<?php
 		echo $this->Html->meta('icon');
-
-		echo $this->Html->css('cake.generic');
-
+		echo $this->Html->script('//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')."\n";
+		echo $this->Html->script('../Semantic-UI/dist/semantic.min')."\n";
+		echo $this->Html->css('../Semantic-UI/dist/semantic')."\n";
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
 	?>
 </head>
 <body>
-	<div id="container">
-		<div id="header">
-			<h1><?php echo $this->Html->link($cakeDescription, 'http://cakephp.org'); ?></h1>
-		</div>
-		<div id="content">
-
-			<?php echo $this->Session->flash(); ?>
-
-			<?php echo $this->fetch('content'); ?>
-		</div>
-		<div id="footer">
-			<?php echo $this->Html->link(
-					$this->Html->image('cake.power.gif', array('alt' => $cakeDescription, 'border' => '0')),
-					'http://www.cakephp.org/',
-					array('target' => '_blank', 'escape' => false, 'id' => 'cake-powered')
-				);
-			?>
-			<p>
-				<?php echo $cakeVersion; ?>
-			</p>
-		</div>
+	<div class="ui primary inverted menu">
+	  <div class="header item">EpiSNP</div>
+	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"qtls","action"=>"index"))?>">Search</a>
+	  <div class="right menu">
+	    <div class="header item">
+	      Support
+	    </div>
+	    <a class="item">
+	      FAQ
+	    </a>
+	    <a class="item">
+	      E-mail Support
+	    </a>
+	  </div>
 	</div>
-	<?php echo $this->element('sql_dump'); ?>
+	<div class="ui page grid">
+	<?php echo $this->Session->flash(); ?>
+	<?php echo $this->fetch('content'); ?>
+	</div>
 </body>
+<script>
+	$(document).ready(function(){
+		$('select.dropdown')
+		  .dropdown()
+		;
+		$('.ui.checkbox')
+		  .checkbox()
+		;
+	})
+</script>
 </html>
