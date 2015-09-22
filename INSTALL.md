@@ -24,3 +24,4 @@ As this project is based on CakePHP, although the deployment process is straight
             Require all granted
     </Directory>
     ```
+4. Inside app/Config , copy local.php.default into local.php, and change inside the Elasticsearch host accordingly to your setup.
