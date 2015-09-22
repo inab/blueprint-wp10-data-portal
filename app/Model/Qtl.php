@@ -9,7 +9,7 @@ class Qtl extends AppModel {
 
 	$searchParams = array(
 		'index' => 'meqtls',
-		'type' => 'meqtls'
+		'type' => 'meqtls',
 		'size' => 40
 	);
         $res = $c->search($searchParams);
