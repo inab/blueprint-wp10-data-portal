@@ -47,7 +47,7 @@
             <th>SNP</th>
             <th>Meth probe</th>
             <th>Gene</th>
-            <th>Monocite</th>
+            <th>Monocyte</th>
             <th>Neutrophil</th>
             <th>T-cell</th>
         </thead>
