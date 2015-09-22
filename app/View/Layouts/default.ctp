@@ -14,7 +14,7 @@
  * @license       http://www.opensource.org/licenses/mit-license.php MIT License
  */
 
-$cakeDescription = _('Epi SNP');
+$cakeDescription = _('BLUEPRINT WP10 data portal');
 $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 ?>
 <!DOCTYPE html>
@@ -37,7 +37,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 </head>
 <body>
 	<div class="ui primary inverted menu">
-	  <div class="header item">EpiSNP</div>
+	  <div class="header item">BLUEPRINT WP10</div>
 	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"qtls","action"=>"index"))?>">Search</a>
 	  <div class="right menu">
 	    <div class="header item">
