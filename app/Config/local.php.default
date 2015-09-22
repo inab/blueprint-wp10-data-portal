@@ -1,0 +1,5 @@
+<?php
+/* Elasticsearch resource */
+
+Configure::write('elasticsearch','http://localhost:9200');
+

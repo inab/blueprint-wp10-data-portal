@@ -359,7 +359,7 @@ if (Configure::read('debug') > 0) {
 }
 
 // Prefix each application on the same server with a different string, to avoid Memcache and APC conflicts.
-$prefix = 'myapp_';
+$prefix = 'wp10_data_portal_';
 
 /**
  * Configure the cache used for general framework caching. Path information,
@@ -385,5 +385,4 @@ Cache::config('_cake_model_', array(
 	'duration' => $duration
 ));
 
-/* Elasticsearch resource */
-Configure::write('elasticsearch','http://localhost:9200');
+config('local');

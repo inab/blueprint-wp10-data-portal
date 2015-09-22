@@ -5,7 +5,16 @@ class QtlsController extends AppController
 
     public function beforeFilter(){
         parent::beforeFilter();
-        $this->client = new Elasticsearch\Client();
+	$elasticsearchConfig = array();
+	
+	$hosts = Configure::read('elasticsearch');
+	if($hosts !== null) {
+		if(!is_array($hosts)) {
+			$hosts = array($hosts);
+		}
+		$elasticsearchConfig['hosts'] = $hosts;
+	}
+        $this->client = new Elasticsearch\Client($elasticsearchConfig);
     }
 
     public function index(){
