@@ -32,6 +32,7 @@ class QtlsController extends AppController
         foreach ($chromRes['aggregations']['chros']['buckets'] as $eachChro) {
 		$chromosomes[] = $eachChro['key'];
 	}
+	sort($chromosomes);
         $this->chromosomes = $chromosomes;
     }
 
