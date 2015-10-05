@@ -2,19 +2,27 @@
     <div class="hidden section divider"></div>
     <h1 class="ui header">Search</h1>
     <div class="ui secondary form segment">
+	<?php
+		$base_url = array('controller' => 'qtls', 'action' => 'index');
+		echo $this->Form->create("Filter",array('url' => $base_url, 'class' => 'filter'));
+	?>
         <div class="five fields">
             <div class="inline field">
+		<?php
+			echo $this->Form->input("chromosome", array('options' => $chromosomes, 'empty' => 'Any chromosome', 'default' => '','div'=>'ui search dropdown'));
+		?>
                 <select class="ui search dropdown">
 			<option value="">Any chromosome</option>
 			<?php foreach ($chromosomes as $chro):?>
 				<option value="<?php echo $chro;?>">Chromosome <?php echo $chro;?></option>
 			<?php endforeach;?>
                 </select>
-             </div>
-            <div class="field"><input type="text" name="first-name" placeholder="Position (3000:4000)"></div>
-            <div class="field"><input type="text" name="first-name" placeholder="Gene"></div>
-            <div class="field"><input type="text" name="first-name" placeholder="SNP"></div>
-            <div class="field"><input type="text" name="last-name" placeholder="Meth probe"></div>
+            </div>
+            <div class="field"><input type="text" name="chromosome_start" placeholder="Position (3000:4000)"></div>
+            <div class="field"><input type="text" name="chromosome_end" placeholder="Position (3000:4000)"></div>
+            <div class="field"><input type="text" name="gene" placeholder="Gene"></div>
+            <div class="field"><input type="text" name="SNP" placeholder="SNP"></div>
+            <div class="field"><input type="text" name="array_probe" placeholder="Meth probe"></div>
         </div>
         <div class="two fields">
             <div class="inline field">
@@ -38,8 +46,10 @@
             <div class="inline field">
 
                 &nbsp;<div class="ui primary button">Search</div>
+                <?php echo $this->Html->link("Reset",$base_url);?>
             </div>
         </div>
+        <?php echo $this->Form->end(); ?>
     </div>
 </div>
 <div class="sixteen wide column">
