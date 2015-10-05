@@ -5,8 +5,9 @@
         <div class="five fields">
             <div class="inline field">
                 <select class="ui search dropdown">
-                    <option value="1">Chromosome 1</option>
-                    <option value="2">Chromosome 2</option>
+			<?php foreach ($chromosomes as $chro):?>
+				<option value="<?php echo $chro;?>">Chromosome <?php echo $chro;?></option>
+			<?php endforeach;?>
                 </select>
              </div>
             <div class="field"><input type="text" name="first-name" placeholder="Position (3000:4000)"></div>
