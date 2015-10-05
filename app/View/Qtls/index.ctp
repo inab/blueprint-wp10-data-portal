@@ -17,6 +17,8 @@
             </div>
             <div class="field"><input type="text" pattern="\d+" name="chromosome_start" placeholder="Start"></div>
             <div class="field"><input type="text" pattern="\d+" name="chromosome_end" placeholder="End"></div>
+        </div>
+        <div class="three fields">
             <div class="field"><input type="text" name="gene" placeholder="Gene"></div>
             <div class="field"><input type="text" pattern="rs.+" name="SNP" placeholder="SNP"></div>
             <div class="field"><input type="text" name="array_probe" placeholder="Meth probe"></div>
@@ -37,7 +39,7 @@
                 <label></label>
             </div>
             <div class="inline field">
-
+		<?php echo $this->Form->submit("Search");?>
                 &nbsp;<div class="ui primary button">Search</div>
                 <?php echo $this->Html->link("Reset",$base_url);?>
             </div>
