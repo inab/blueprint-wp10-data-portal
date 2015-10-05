@@ -57,33 +57,24 @@
             <tr>
                 <td><?php echo $this->Html->link(
 			$h['_source']['SNP'],
-			'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi',
+			'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=' . $h['_source']['SNP'],
 			array(
-				'target'=>'_blank',
-				'?' => array(
-					'searchType'=>'adhoc_search',
-					'type' => 'rs',
-					'rs' => $h['_source']['SNP']
-				)
+				'target' => '_blank'
 			)
 		);?></td>
                 <td><?php echo $h['_source']['meth.probe'];?></td>
                 <td><?php echo $this->Html->link(
 			$h['_source']['gid.1'],
-			'http://blueprint-data.bsc.es/#/?q=gene:'+$h['_source']['ensembl_gene_id']+'&w=500',
+			'http://blueprint-data.bsc.es/#/?q=gene:' . $h['_source']['ensembl_gene_id'] . '&w=500',
 			array(
-				'target' => '_blank',
+				'target' => '_blank'
 			)
 		);?></td>
                 <td><?php echo $this->Html->link(
 			$h['_source']['ensembl_gene_id'],
-			'http://jan2013.archive.ensembl.org/Homo_sapiens/Gene/Summary',
+			'http://jan2013.archive.ensembl.org/Homo_sapiens/Gene/Summary?db=core&g=' . $h['_source']['ensembl_gene_id'],
 			array(
-				'target' => '_blank',
-				'?' => array(
-					'db' => 'core',
-					'g' => $h['_source']['ensembl_gene_id']
-				)
+				'target' => '_blank'
 			)
 		);?></td>
                 <td><?php echo $h['_source']['mon.fdr'];?></td>
