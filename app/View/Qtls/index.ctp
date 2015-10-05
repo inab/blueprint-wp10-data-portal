@@ -6,28 +6,24 @@
 		$base_url = array('controller' => 'qtls', 'action' => 'index');
 		echo $this->Form->create("Filter",array('url' => $base_url, 'class' => 'filter'));
 	?>
-        <div class="five fields">
-            <div class="inline field">
-                <select class="ui search dropdown">
+        <div class="three fields">
+            <div class="field">
+                <select name="chromosome" class="ui search dropdown">
 			<option value="">Any chromosome</option>
 			<?php foreach ($chromosomes as $chro):?>
 				<option value="<?php echo $chro;?>">Chromosome <?php echo $chro;?></option>
 			<?php endforeach;?>
                 </select>
             </div>
-            <div class="field"><input type="text" name="chromosome_start" placeholder="Position (3000:4000)"></div>
-            <div class="field"><input type="text" name="chromosome_end" placeholder="Position (3000:4000)"></div>
+            <div class="field"><input type="text" pattern="\d+" name="chromosome_start" placeholder="Start"></div>
+            <div class="field"><input type="text" pattern="\d+" name="chromosome_end" placeholder="End"></div>
             <div class="field"><input type="text" name="gene" placeholder="Gene"></div>
-            <div class="field"><input type="text" name="SNP" placeholder="SNP"></div>
+            <div class="field"><input type="text" pattern="rs.+" name="SNP" placeholder="SNP"></div>
             <div class="field"><input type="text" name="array_probe" placeholder="Meth probe"></div>
         </div>
         <div class="two fields">
             <div class="inline field">
-                <label>FDR cutoff</label>
-                <select class="ui search dropdown">
-                    <option value="AF">0.01</option>
-                    <option value="AX">0.05</option>
-                </select>
+		<input type="number" min="0.0" max="1.0" name="fdr_cutoff" placeholder="FDR cutoff (e.g. 0.01)">
                 &nbsp;
                 <div class="ui slider checkbox">
                   <input type="checkbox">
