@@ -8,9 +8,6 @@
 	?>
         <div class="five fields">
             <div class="inline field">
-		<?php
-			echo $this->Form->input("chromosome", array('options' => $chromosomes, 'empty' => 'Any chromosome', 'default' => '','div'=>'ui search dropdown'));
-		?>
                 <select class="ui search dropdown">
 			<option value="">Any chromosome</option>
 			<?php foreach ($chromosomes as $chro):?>
