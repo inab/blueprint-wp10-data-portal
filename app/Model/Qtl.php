@@ -13,7 +13,7 @@ class Qtl extends AppModel {
 		'size' => 40
 	);
 	
-	if(! is_null($q)) {
+	if(! empty($q)) {
 		$searchParams['body'] = $q;
 	}
 	
