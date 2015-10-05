@@ -26,7 +26,7 @@ class QtlsController extends AppController
 			}
 		}
         }';
-        $chromRes = $this->Qtl->search($this->client,$q = '');
+        $chromRes = $this->Qtl->search($this->client,$q = $chroJson);
         $chromosomes = array();
         foreach ($chromRes['aggregations']['chros']['buckets'] as $eachChro) {
 		$chromosomes[] = $eachChro['key'];
