@@ -96,9 +96,9 @@ class QtlsController extends AppController
 							if($param_name == "search"){
 							} else {
 							}
-							$this->request->data['Filter'][$param_name] = $value;
 						}
 				}
+				$this->request->data['Filter'][$param_name] = $value;
 			}
 		}
 		
