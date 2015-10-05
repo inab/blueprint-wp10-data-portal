@@ -39,7 +39,7 @@
                 <label></label>
             </div>
             <div class="inline field">
-		<?php echo $this->Form->submit("Search");?>
+		<?php echo $this->Form->submit("Search",array('div' => 'ui primary button'));?>
                 &nbsp;<div class="ui primary button">Search</div>
                 <?php echo $this->Html->link("Reset",$base_url);?>
             </div>
