@@ -20,8 +20,9 @@ class QtlsController extends AppController
         $chroJson = '{
 		"aggs": {
 			"chros": {
-				"cardinality": {
-					"field": "CHR"
+				"terms": {
+					"field": "CHR",
+					"size": 0
 				}
 			}
 		}
