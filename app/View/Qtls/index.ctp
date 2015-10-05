@@ -47,6 +47,7 @@
             <th>SNP</th>
             <th>Meth probe</th>
             <th>Gene</th>
+            <th>Ensembl Id</th>
             <th>Monocyte</th>
             <th>Neutrophil</th>
             <th>T-cell</th>
@@ -54,9 +55,37 @@
         <tbody>
             <?php foreach ($res['hits']['hits'] as $h):?>
             <tr>
-                <td><?php echo $h['_source']['SNP'];?></td>
+                <td><?php echo $this->Html->link(
+			$h['_source']['SNP'],
+			'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi',
+			array(
+				'target'=>'_blank',
+				'?' => array(
+					'searchType'=>'adhoc_search',
+					'type' => 'rs',
+					'rs' => $h['_source']['SNP']
+				)
+			)
+		);?></td>
                 <td><?php echo $h['_source']['meth.probe'];?></td>
-                <td><?php echo $h['_source']['gid.1'];?></td>
+                <td><?php echo $this->Html->link(
+			$h['_source']['gid.1'],
+			'http://blueprint-data.bsc.es/#/?q=gene:'+$h['_source']['ensembl_gene_id']+'&w=500',
+			array(
+				'target' => '_blank',
+			)
+		);?></td>
+                <td><?php echo $this->Html->link(
+			$h['_source']['ensembl_gene_id'],
+			'http://jan2013.archive.ensembl.org/Homo_sapiens/Gene/Summary',
+			array(
+				'target' => '_blank',
+				'?' => array(
+					'db' => 'core',
+					'g' => $h['_source']['ensembl_gene_id']
+				)
+			)
+		);?></td>
                 <td><?php echo $h['_source']['mon.fdr'];?></td>
                 <td><?php echo $h['_source']['neu.fdr'];?></td>
                 <td><?php echo $h['_source']['tcl.fdr'];?></td>

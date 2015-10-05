@@ -1,6 +1,7 @@
 <?php
 class QtlsController extends AppController
 {
+	public $helpers = array('Html', 'Form');
     public $client; 
 
     public function beforeFilter(){
