@@ -12,6 +12,11 @@ class Qtl extends AppModel {
 		'type' => 'meqtls',
 		'size' => 40
 	);
+	
+	if(! is_null($q)) {
+		$searchParams['body'] = $q;
+	}
+	
         $res = $c->search($searchParams);
         return $res;
     }
