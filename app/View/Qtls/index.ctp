@@ -70,7 +70,13 @@
 				'target' => '_blank'
 			)
 		);?></td>
-                <td><?php echo $h['_source']['meth.probe'];?></td>
+                <td><?php echo $this->Html->link(
+			$h['_source']['meth.probe'],
+			'http://genome-euro.ucsc.edu/cgi-bin/hgTracks?clade=mammal&org=Human&db=hg19&position=' . $h['_source']['meth.probe'],
+			array(
+				'target' => '_blank'
+			)
+		);?></td>
                 <td><?php echo $this->Html->link(
 			$h['_source']['gid.1'],
 			'http://blueprint-data.bsc.es/#/?q=gene:' . $h['_source']['ensembl_gene_id'] . '&w=500',
