@@ -6,38 +6,41 @@
 		echo $this->Form->create();
 	?>
         <div class="three fields">
-            <div class="field">
-                <select name="chromosome" class="ui search dropdown">
-			<?php
-				echo $this->Html->tag('option','Any chromosome',array('value' => '','selected' => 'selected'));
-				foreach ($chromosomes as $chro) {
-					echo $this->Html->tag('option','Chromosome '.$chro,array('value' => $chro));
-				}
-			?>
-                </select>
-            </div>
-            <div class="field"><input type="text" pattern="\d+" name="chromosome_start" placeholder="Start"></div>
-            <div class="field"><input type="text" pattern="\d+" name="chromosome_end" placeholder="End"></div>
+		<?php
+			$attrs = array();
+			foreach ($chromosomes as $chro) {
+				$attrs[$chro] = 'Chromosome '.$chro;
+			}
+			echo $this->Form->input('chromosome',array('div' => 'field','empty' => 'Any chromosome', 'options' => $attrs, 'label' => false, 'class' => 'ui search dropdown', 'default' => ''));
+			echo $this->Form->input('chromosome_start',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => '\d+', 'placeholder'=>'Start'));
+			echo $this->Form->input('chromosome_end',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => '\d+', 'placeholder'=>'End'));
+		?>
         </div>
         <div class="three fields">
-            <div class="field"><input type="text" name="gene" placeholder="Gene"></div>
-            <div class="field"><input type="text" pattern="rs.+" name="SNP" placeholder="SNP"></div>
-            <div class="field"><input type="text" name="array_probe" placeholder="Meth probe"></div>
+		<?php
+			echo $this->Form->input('gene',array('type' => 'text', 'div' => 'field','label' => false, 'placeholder'=>'Gene'));
+			echo $this->Form->input('SNP',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => 'rs.+', 'placeholder'=>'SNP'));
+			echo $this->Form->input('array_probe',array('type' => 'text', 'div' => 'field','label' => false, 'placeholder'=>'Meth probe'));
+		?>
         </div>
         <div class="two fields">
             <div class="inline field">
-		<input type="number" min="0.0" max="1.0" name="fdr_cutoff" placeholder="FDR cutoff (e.g. 0.01)">
-                &nbsp;
+		<?php
+			echo $this->Form->input('fdr_cutoff',array('type' => 'number','div' => false,'min'=> '0.0', 'max' => '1.0', 'step' => 'any', 'label' => false, 'placeholder'=>'FDR cutoff (e.g. 0.01)'));
+		?>
+		<br />
                 <div class="ui slider checkbox">
-                  <input type="checkbox">
-                  <label>RNA based QTLs</label>
+		<?php
+			echo $this->Form->checkbox('rna_qtls');
+			echo $this->Form->label('rna_qtls','RNA based QTLs');
+		?>
                 </div>
-                <label></label>
                 <div class="ui slider checkbox">
-                  <input type="checkbox">
-                  <label>Meth QTLs</label>
+		<?php
+			echo $this->Form->checkbox('meth_qtls');
+			echo $this->Form->label('meth_qtls','Meth QTLs');
+		?>
                 </div>
-                <label></label>
             </div>
             <div class="inline field">
 		<?php
