@@ -3,16 +3,17 @@
     <h1 class="ui header">Search</h1>
     <div class="ui secondary form segment">
 	<?php
-		$base_url = array('controller' => 'qtls', 'action' => 'index');
-		echo $this->Form->create("Filter",array('url' => $base_url, 'class' => 'filter'));
+		echo $this->Form->create();
 	?>
         <div class="three fields">
             <div class="field">
                 <select name="chromosome" class="ui search dropdown">
-			<option value="">Any chromosome</option>
-			<?php foreach ($chromosomes as $chro):?>
-				<option value="<?php echo $chro;?>">Chromosome <?php echo $chro;?></option>
-			<?php endforeach;?>
+			<?php
+				echo $this->Html->tag('option','Any chromosome',array('value' => '','selected' => 'selected'));
+				foreach ($chromosomes as $chro) {
+					echo $this->Html->tag('option','Chromosome '.$chro,array('value' => $chro));
+				}
+			?>
                 </select>
             </div>
             <div class="field"><input type="text" pattern="\d+" name="chromosome_start" placeholder="Start"></div>
@@ -41,7 +42,7 @@
             <div class="inline field">
 		<?php
 			echo $this->Form->submit("Search",array('div' => false,'class'=>'ui primary button submit'));
-			echo $this->Html->link("Reset",$base_url);
+			echo $this->Form->reset("Reset",array('div' => false,'class'=>'ui secondary button'));
 		?>
             </div>
         </div>
