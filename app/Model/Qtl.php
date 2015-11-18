@@ -225,10 +225,10 @@ class Qtl extends AppModel {
 		);
 		
 		if(! empty($q)) {
-			$searchParams['body'] = $q;
+			$countParams['body'] = $q;
 		}
 		
-		$res = $this->client->count($searchParams);
+		$res = $this->client->count($countParams);
 		return $res;
 	}
 }
