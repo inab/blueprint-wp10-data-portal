@@ -82,7 +82,7 @@
             <?php foreach ($res['hits']['hits'] as $h):?>
             <tr>
                 <td><?php
-		$coordinates = $h['_source']['chromosome_name'].':'.$h['_source']['chromosome_start'].'-'.$h['_source']['chromosome_end'];
+		$coordinates = $h['_source']['CHR'].':'.$h['_source']['start_position'].'-'.$h['_source']['end_position'];
 		echo $this->Html->link(
 			$coordinates,
 			'http://www.ensembl.org/Homo_sapiens/Location/View?r=' . $coordinates,
