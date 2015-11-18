@@ -4,7 +4,16 @@ class QtlsController extends AppController
 	public $helpers = array('Html', 'Form');
     public $client;
     public $chromosomes;
-
+	
+	private $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
+	private $fdrAddShould = function(array &$cummul_array,array &$value) {
+		foreach($value['bool']['should'][1] as $should) {
+			$cummul_array[] = $should;
+		}
+		
+		return $cummul_array;
+	};
+	
     public function beforeFilter(){
         parent::beforeFilter();
 	$elasticsearchConfig = array();
@@ -28,10 +37,7 @@ class QtlsController extends AppController
 		}
         }';
         $chromRes = $this->Qtl->search($this->client,$q = $chroJson);
-        $chromosomes = array();
-        foreach ($chromRes['aggregations']['chros']['buckets'] as $eachChro) {
-		$chromosomes[] = $eachChro['key'];
-	}
+        $chromosomes = array_column($chromRes['aggregations']['chros']['buckets'],'key');
 	sort($chromosomes);
         $this->chromosomes = $chromosomes;
     }
@@ -48,33 +54,64 @@ class QtlsController extends AppController
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters
 	$filter = array();
-	$andConds = array();
+	
+	$andFilters = array();
+	$andQueries = array();
 	foreach($params as $param_name => $value) {
 		// Don't apply the default named parameters used for pagination
 		if(!empty($value)) {
 			switch($param_name) {
 				case "chromosome":
-					$andConds[] = array('term' => array('CHR' => $value));
+					$andFilters[] = array(
+						'term' => array(
+							'CHR' => $value
+						)
+					);
 					break;
 				case "chromosome_start":
-					$andConds[] = array('range' => array('start_position' => array('gte' => $value)));
+					$andFilters[] = array(
+						'range' => array(
+							'start_position' => array(
+								'gte' => $value
+							)
+						)
+					);
 					break;
 				case "chromosome_end":
-					$andConds[] = array('range' => array('end_position' => array('lte' => $value)));
+					$andFilters[] = array(
+						'range' => array(
+							'end_position' => array(
+								'lte' => $value
+							)
+						)
+					);
 					break;
 				case "gene":
-					$andConds[] = array('term' => array('UCSC_RefGene_Name' => $value));
+					$andQueries[] = array(
+						'match' => array(
+							'UCSC_RefGene_Name' => $value
+						)
+					);
 					break;
 				case "SNP":
-					$andConds[] = array('term' => array('SNP' => $value));
+					$andFilters[] = array(
+						'term' => array(
+							'SNP' => $value
+						)
+					);
 					break;
 				case "array_probe":
-					$andConds[] = array('term' => array('meth.probe' => $value));
+					$andFilters[] = array(
+						'term' => array(
+							'meth.probe' => $value
+						)
+					);
 					break;
 				case "fdr_cutoff":
-					$andConds[] = array('range' => array('mon.fdr' => array('lte' => $value)));
-					$andConds[] = array('range' => array('neu.fdr' => array('lte' => $value)));
-					$andConds[] = array('range' => array('tcl.fdr' => array('lte' => $value)));
+					$fdr_cutoff = $value;
+					break;
+				case "all_fdrs":
+					$all_fdrs = $value;
 					break;
 				default:
 					if(!in_array($param_name, array('page','sort','direction','limit'))){
@@ -88,13 +125,78 @@ class QtlsController extends AppController
 			$filter[$param_name] = $value;
 		}
 	}
+	
+	if(isset($fdr_cutoff) && strlen($fdr_cutoff)>0) {
+		// At least, one of the fields should exist
+		$cutoffFilters = array();
+		
+		$cutoffFields = array();
+		
+		foreach ($fdrFields as $fdrField) {
+			$cutoffFields[] = array(
+				'exists' => array(
+					'field' => $fdrField
+				)
+			);
+			
+			$cutoffFilters[] = array(
+				'bool' => array(
+					'should' => array(
+						array(
+							'missing' => array(
+								'field' => $fdrField
+							)
+						),
+						array(
+							'range' => array(
+								$fdrField => array(
+									'lte' => $fdr_cutoff
+								)
+							)
+						)
+					)
+				)
+			);
+		}
+		
+		array_push($andFilters, array(
+			'bool' => array(
+				'should' => $cutoffFields
+			)
+		));
+		
+		if($all_fdrs > 0) {
+			foreach($cutoffFilters as $cutoffFilter) {
+				$andFilters[] = $cutoffFilter;
+			}
+		} else {
+			$shouldFDR = array_reduce($cutoffFilters, $fdrAddShould, array());
+			$andFilters[] = array(
+				'bool' => array(
+					'should' => $shouldFDR
+				)
+			);
+		}
+	}
 
 	// Generating a query
 	$query = array();
-	if(! empty($andConds)) {
-		$query['query']['filtered']['filter']['bool']['must'] = $andConds;
+	if(! empty($andFilters)) {
+		if(count($andFilters)==1) {
+			$query['query']['filtered']['filter'] = $andFilters[0];
+		} else {
+			$query['query']['filtered']['filter']['bool']['must'] = $andFilters;
+		}
 	}
-
+	
+	if(! empty($andQueries)) {
+		if(count($andQueries)==1) {
+			$query['query']['filtered']['query'] = $andQueries[0];
+		} else {
+			$query['query']['filtered']['query']['bool']['must'] = $andQueries;
+		}
+	}
+	
 	$this->log($query,'debug');	
 	$res = $this->Qtl->search($this->client,$q = $query);
 	$this->set('res',$res);
