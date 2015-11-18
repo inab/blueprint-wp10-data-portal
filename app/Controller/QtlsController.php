@@ -132,7 +132,7 @@ class QtlsController extends AppController
 		
 		$cutoffFields = array();
 		
-		foreach ($fdrFields as $fdrField) {
+		foreach (self::$fdrFields as $fdrField) {
 			$cutoffFields[] = array(
 				'exists' => array(
 					'field' => $fdrField
@@ -170,7 +170,7 @@ class QtlsController extends AppController
 				$andFilters[] = $cutoffFilter;
 			}
 		} else {
-			$shouldFDR = array_reduce($cutoffFilters, '__fdrAddShould', array());
+			$shouldFDR = array_reduce($cutoffFilters, 'self::__fdrAddShould', array());
 			$andFilters[] = array(
 				'bool' => array(
 					'should' => $shouldFDR
