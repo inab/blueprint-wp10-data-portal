@@ -120,9 +120,9 @@
 				'target' => '_blank'
 			)
 		);?></td>
-                <td><?php echo if(isset($h['_source']['mon.fdr'])) { sprintf("%.4G",$h['_source']['mon.fdr']); }?></td>
-                <td><?php echo if(isset($h['_source']['neu.fdr'])) { sprintf("%.4G",$h['_source']['neu.fdr']); }?></td>
-                <td><?php echo if(isset($h['_source']['tcl.fdr'])) { sprintf("%.4G",$h['_source']['tcl.fdr']); }?></td>
+                <td><?php if(isset($h['_source']['mon.fdr'])) { echo sprintf("%.4G",$h['_source']['mon.fdr']); }?></td>
+                <td><?php if(isset($h['_source']['neu.fdr'])) { echo sprintf("%.4G",$h['_source']['neu.fdr']); }?></td>
+                <td><?php if(isset($h['_source']['tcl.fdr'])) { echo sprintf("%.4G",$h['_source']['tcl.fdr']); }?></td>
             </tr>
             <?php endforeach;?>
         </tbody>
