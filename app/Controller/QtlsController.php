@@ -2,6 +2,8 @@
 class QtlsController extends AppController
 {
 	public $helpers = array('Html', 'Form');
+	public $components = array('Paginator');
+	
     public $client;
     public $chromosomes;
 	
@@ -10,6 +12,11 @@ class QtlsController extends AppController
 		'CHR' => 'asc',
 		'start_position' => 'asc',
 		'end_position' => 'asc'
+	);
+	
+	public $paginate = array(
+		'limit' => 25,
+		'order' => self::$DEFAULT_SORT_CRITERIA
 	);
 	
     public function beforeFilter(){
@@ -209,15 +216,15 @@ class QtlsController extends AppController
 		return $query;
 	}
 	
-	public function paginate($conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
+	public function paginate(Model $model, $conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
 		$query = $this->esQueryBuilder($conditions = $conditions, $fields = $fields, $order = $order);
 		
-		return $this->Qtl->search($this->client,$q = $query,$size = $limit,$offset = ($page - 1)*$limit);
+		return $model->search($this->client,$q = $query,$size = $limit,$offset = ($page - 1)*$limit);
 	}
 	
-	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
+	public function paginateCount(Model $model, $conditions = null, $recursive = 0, $extra = array()) {
 		$query = $this->esQueryBuilder($conditions = $conditions);
-		$result = $this->Qtl->count($this->client,$q = $query);
+		$result = $model->count($this->client,$q = $query);
 		
 		return $result['count'];
 	}
@@ -230,6 +237,14 @@ class QtlsController extends AppController
 	} else {
 		$params = $this->request->data;
 	}
+
+	$this->Paginator->settings = array(
+		'conditions' => $params,
+		'order' => self::$DEFAULT_SORT_CRITERIA,
+		'limit' => 25
+	);
+	
+	$this->log($this->Paginator->paginate('Qtl'),'debug');
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters
