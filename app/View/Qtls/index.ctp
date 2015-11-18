@@ -34,7 +34,8 @@
 			echo $this->Form->label('all_fdrs','All FDRs');
 		?>
                 </div>
-		<br />
+            </div>
+            <div class="inline field">
                 <div class="ui slider checkbox">
 		<?php
 			echo $this->Form->checkbox('rna_qtls');
@@ -48,9 +49,15 @@
 		?>
                 </div>
             </div>
-            <div class="inline field">
+        </div>
+        <div class="two fields">
+            <div class="field">
 		<?php
 			echo $this->Form->submit("Search",array('div' => false,'class'=>'ui primary button submit'));
+		?>
+            </div>
+            <div class="field">
+		<?php
 			echo $this->Form->reset("Reset",array('div' => false,'class'=>'ui secondary button'));
 		?>
             </div>
