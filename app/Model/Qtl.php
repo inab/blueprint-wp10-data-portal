@@ -15,7 +15,7 @@ class Qtl extends AppModel {
 			'size' => $size
 		);
 		
-		if(! empty($offset)) {
+		if(! empty($offset) && $offset > 0) {
 			$searchParams['from'] = $offset;
 		}
 		
