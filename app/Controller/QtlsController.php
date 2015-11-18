@@ -44,7 +44,22 @@ class QtlsController extends AppController
         $this->chromosomes = $chromosomes;
     }
 	
-    public function index(){
+    public function index() {
+	$params = null;
+	if(isset($this->request->data['Qtl'])) {
+		$this->redirect(array('search'=> $this->request->data['Qtl'], 'page' => 1));
+	}
+	if(empty($this->passedArgs['search']) && isset($this->request->data['Qtl'])) {
+		$params = $this->request->data['Qtl'];
+		unset($this->passedArgs['page']);
+		$this->passedArgs['search'] = $params;
+	}
+	if(empty($this->request->data) && isset($this->passedArgs['search'])) {
+		$params = $this->passedArgs['search'];
+		$this->request->data['Qtl'] = $params;
+	}
+	
+	/*
 	if(isset($this->request->params['named']) && count($this->request->params['named']) > 0) {
 		$params = $this->request->params['named'];
 	} else if(isset($this->request->data['Qtl'])) {
@@ -52,15 +67,16 @@ class QtlsController extends AppController
 	} else {
 		$params = $this->request->data;
 	}
+	*/
 
 	$this->Paginator->settings = array(
-		'conditions' => $params,
+	//	'conditions' => $params,
 		'fields' => null,
 		'order' => self::$DEFAULT_SORT_CRITERIA,
 		'limit' => 25
 	);
 	
-	$res = $this->Paginator->paginate('Qtl');
+	$res = $this->Paginator->paginate('Qtl',$params,array('CHR'));
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters

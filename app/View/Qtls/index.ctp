@@ -4,6 +4,7 @@
     <div class="ui secondary form segment">
 	<?php
 		$ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
+		$this->Paginator->options(array('url' => $this->passedArgs));
 		echo $this->Form->create();
 	?>
         <div class="three fields">
@@ -68,6 +69,7 @@
 </div>
 <div class="sixteen wide column">
     <div class="hidden section divider"></div>
+	<?php echo $this->Paginator->numbers(array('first' => 'First','last'=>'Last')); ?>
     <table class="ui table">
         <thead>
             <th>Coordinates</th>
@@ -127,4 +129,5 @@
             <?php endforeach;?>
         </tbody>
     </table>
+	<?php echo $this->Paginator->numbers(array('first' => 'First','last'=>'Last')); ?>
 </div>
