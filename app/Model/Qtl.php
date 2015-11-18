@@ -4,8 +4,8 @@ App::uses('AppModel', 'Model');
 class Qtl extends AppModel {
 	public $useTable = false;
 	
-	private $BP_INDEX = 'meqtls';
-	private $BP_TYPE = 'meqtls';
+	private static $BP_INDEX = 'meqtls';
+	private static $BP_TYPE = 'meqtls';
 	
 	public function search($c,$q = null,$size = 40,$offset = null) {
 		
