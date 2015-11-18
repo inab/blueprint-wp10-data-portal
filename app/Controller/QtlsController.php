@@ -6,13 +6,23 @@ class QtlsController extends AppController
     public $chromosomes;
 	
 	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
-	private static function __fdrAddShould(array &$cummul_array,array &$value) {
-		foreach($value['bool']['should'][1] as $should) {
-			$cummul_array[] = $should;
-		}
-		
-		return $cummul_array;
-	}
+	private static $DEFAULT_SORT_CRITERIA = array(
+		array(
+			'CHR' => array(
+				'order' => 'asc'
+			)
+		),
+		array(
+			'start_position' => array(
+				'order' => 'asc'
+			)
+		),
+		array(
+			'end_position' => array(
+				'order' => 'asc'
+			)
+		)
+	);
 	
     public function beforeFilter(){
         parent::beforeFilter();
@@ -57,6 +67,7 @@ class QtlsController extends AppController
 	
 	$andFilters = array();
 	$andQueries = array();
+	$sortCriteria = array();
 	foreach($params as $param_name => $value) {
 		// Don't apply the default named parameters used for pagination
 		if(!empty($value)) {
@@ -182,7 +193,9 @@ class QtlsController extends AppController
 			);
 		}
 	}
-
+	
+	$sortCriteria = self::$DEFAULT_SORT_CRITERIA;
+	
 	// Generating a query
 	$query = array();
 	if(! empty($andFilters)) {
@@ -199,6 +212,10 @@ class QtlsController extends AppController
 		} else {
 			$query['query']['filtered']['query']['bool']['must'] = $andQueries;
 		}
+	}
+	
+	if(! empty($sortCriteria)) {
+			$query['sort'] = $sortCriteria;
 	}
 	
 	$this->log($query,'debug');	
