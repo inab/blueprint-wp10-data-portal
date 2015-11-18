@@ -235,7 +235,7 @@ class QtlsController extends AppController
 	// Inspect all the named parameters to apply the filters
 	$filter = array();
 	
-	$query = $this->esQueryBuilder($conditions = $params,$order = self::$DEFAULT_SORT_CRITERIA);
+	$query = $this->esQueryBuilder($conditions = $params, $fields = null, $order = self::$DEFAULT_SORT_CRITERIA);
 	
 	$this->log($query,'debug');	
 	$res = $this->Qtl->search($this->client,$q = $query);
