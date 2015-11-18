@@ -8,11 +8,6 @@ class Qtl extends AppModel {
 	private static $BP_TYPE = 'meqtls';
 	
 	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
-	private static $DEFAULT_SORT_CRITERIA = array(
-		'CHR' => 'asc',
-		'start_position' => 'asc',
-		'end_position' => 'asc'
-	);
 	
 	protected function esQueryBuilder($conditions = null,$fields = null,$order = null) {
 		$andFilters = array();

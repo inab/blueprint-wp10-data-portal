@@ -7,6 +7,12 @@ class QtlsController extends AppController
     public $client;
     public $chromosomes;
 	
+	private static $DEFAULT_SORT_CRITERIA = array(
+		'CHR' => 'asc',
+		'start_position' => 'asc',
+		'end_position' => 'asc'
+	);
+	
 	public $paginate = array(
 		'limit' => 25
 	);
@@ -60,7 +66,7 @@ class QtlsController extends AppController
 	// Inspect all the named parameters to apply the filters
 	$filter = array();
 	
-	$query = $this->Qtl->esQueryBuilder($conditions = $params, $fields = null, $order = Qtl::$DEFAULT_SORT_CRITERIA);
+	$query = $this->Qtl->esQueryBuilder($conditions = $params, $fields = null, $order = self::$DEFAULT_SORT_CRITERIA);
 	
 	$this->log($query,'debug');	
 	$res = $this->Qtl->search($this->client,$q = $query);
