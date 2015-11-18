@@ -4,8 +4,7 @@ class QtlsController extends AppController
 	public $helpers = array('Html', 'Form');
 	public $components = array('Paginator');
 	
-    public $client;
-    public $chromosomes;
+	public $chromosomes;
 	
 	private static $DEFAULT_SORT_CRITERIA = array(
 		'CHR' => 'asc',
@@ -28,7 +27,7 @@ class QtlsController extends AppController
 		}
 		$elasticsearchConfig['hosts'] = $hosts;
 	}
-        $this->client = new Elasticsearch\Client($elasticsearchConfig);
+	$this->Qtl->setupClient($elasticsearchConfig);
         $chroJson = '{
 		"aggs": {
 			"chros": {
@@ -39,7 +38,7 @@ class QtlsController extends AppController
 			}
 		}
         }';
-        $chromRes = $this->Qtl->search($this->client,$q = $chroJson);
+        $chromRes = $this->Qtl->search($q = $chroJson);
         $chromosomes = array_column($chromRes['aggregations']['chros']['buckets'],'key');
 	sort($chromosomes);
         $this->chromosomes = $chromosomes;
@@ -69,7 +68,7 @@ class QtlsController extends AppController
 	$query = $this->Qtl->esQueryBuilder($conditions = $params, $fields = null, $order = self::$DEFAULT_SORT_CRITERIA);
 	
 	$this->log($query,'debug');	
-	$res = $this->Qtl->search($this->client,$q = $query);
+	$res = $this->Qtl->search($q = $query);
 	$this->set('res',$res);
 	$this->set('chromosomes',$this->chromosomes);
 	$this->set('filter',$filter);

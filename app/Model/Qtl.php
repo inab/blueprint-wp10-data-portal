@@ -9,6 +9,8 @@ class Qtl extends AppModel {
 	
 	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
 	
+	private $client;
+	
 	protected function esQueryBuilder($conditions = null,$fields = null,$order = null) {
 		$andFilters = array();
 		$andQueries = array();
@@ -181,17 +183,21 @@ class Qtl extends AppModel {
 	public function paginate($conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
 		$query = $this->esQueryBuilder($conditions = $conditions, $fields = $fields, $order = $order);
 		
-		return $this->search($this->client,$q = $query,$size = $limit,$offset = ($page - 1)*$limit);
+		return $this->search($q = $query,$size = $limit,$offset = ($page - 1)*$limit);
 	}
 	
 	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
 		$query = $this->esQueryBuilder($conditions = $conditions);
-		$result = $this->count($this->client,$q = $query);
+		$result = $this->count($q = $query);
 		
 		return $result['count'];
 	}
 	
-	public function search($c,$q = null,$size = 40,$offset = null) {
+	public function setupClient($elasticsearchConfig) {
+		$this->client = new Elasticsearch\Client($elasticsearchConfig);
+	}
+
+	public function search($q = null,$size = 40,$offset = null) {
 		
 		$searchParams = array(
 			'index' => self::$BP_INDEX,
@@ -207,11 +213,11 @@ class Qtl extends AppModel {
 			$searchParams['body'] = $q;
 		}
 		
-		$res = $c->search($searchParams);
+		$res = $this->client->search($searchParams);
 		return $res;
 	}
 
-	public function count($c,$q = null) {
+	public function count($q = null) {
 		
 		$countParams = array(
 			'index' => self::$BP_INDEX,
@@ -222,7 +228,7 @@ class Qtl extends AppModel {
 			$searchParams['body'] = $q;
 		}
 		
-		$res = $c->count($searchParams);
+		$res = $this->client->count($searchParams);
 		return $res;
 	}
 }
