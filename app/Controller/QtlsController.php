@@ -12,7 +12,7 @@ class QtlsController extends AppController
 		}
 		
 		return $cummul_array;
-	};
+	}
 	
     public function beforeFilter(){
         parent::beforeFilter();
