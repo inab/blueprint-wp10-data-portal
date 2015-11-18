@@ -15,8 +15,7 @@ class QtlsController extends AppController
 	);
 	
 	public $paginate = array(
-		'limit' => 25,
-		'order' => self::$DEFAULT_SORT_CRITERIA
+		'limit' => 25
 	);
 	
     public function beforeFilter(){
