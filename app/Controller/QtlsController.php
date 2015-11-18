@@ -55,6 +55,7 @@ class QtlsController extends AppController
 
 	$this->Paginator->settings = array(
 		'conditions' => $params,
+		'fields' => null,
 		'order' => self::$DEFAULT_SORT_CRITERIA,
 		'limit' => 25
 	);
