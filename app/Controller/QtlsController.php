@@ -165,7 +165,7 @@ class QtlsController extends AppController
 			)
 		));
 		
-		if($all_fdrs > 0) {
+		if(isset($all_fdrs) && $all_fdrs > 0) {
 			foreach($cutoffFilters as $cutoffFilter) {
 				$andFilters[] = $cutoffFilter;
 			}
