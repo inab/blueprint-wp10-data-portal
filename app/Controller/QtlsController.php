@@ -5,8 +5,8 @@ class QtlsController extends AppController
     public $client;
     public $chromosomes;
 	
-	private $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
-	private $fdrAddShould = function(array &$cummul_array,array &$value) {
+	static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
+	static $fdrAddShould = function (array &$cummul_array,array &$value) {
 		foreach($value['bool']['should'][1] as $should) {
 			$cummul_array[] = $should;
 		}
