@@ -28,6 +28,12 @@
 		<?php
 			echo $this->Form->input('fdr_cutoff',array('type' => 'number','div' => false,'min'=> '0.0', 'max' => '1.0', 'step' => 'any', 'label' => false, 'placeholder'=>'FDR cutoff (e.g. 0.01)'));
 		?>
+                <div class="ui slider checkbox">
+		<?php
+			echo $this->Form->checkbox('all_fdrs');
+			echo $this->Form->label('all_fdrs','All FDRs');
+		?>
+                </div>
 		<br />
                 <div class="ui slider checkbox">
 		<?php
@@ -60,9 +66,9 @@
             <th>Meth probe</th>
             <th>Gene</th>
             <th>Ensembl Id</th>
-            <th>Monocyte</th>
-            <th>Neutrophil</th>
-            <th>T-cell</th>
+            <th>Monocyte FDR</th>
+            <th>Neutrophil FDR</th>
+            <th>T-cell FDR</th>
         </thead>
         <tbody>
             <?php foreach ($res['hits']['hits'] as $h):?>
