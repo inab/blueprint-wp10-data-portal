@@ -129,6 +129,7 @@ class QtlsController extends AppController
 	if(isset($fdr_cutoff) && strlen($fdr_cutoff)>0) {
 		// At least, one of the fields should exist
 		$cutoffFilters = array();
+		$cutoffFiltersRange = array();
 		
 		$cutoffFields = array();
 		
@@ -139,6 +140,16 @@ class QtlsController extends AppController
 				)
 			);
 			
+			$cutoffFilterRange = array(
+				'range' => array(
+					$fdrField => array(
+						'lte' => $fdr_cutoff
+					)
+				)
+			);
+			
+			$cutoffFiltersRange[] = $cutoffFilterRange;
+			
 			$cutoffFilters[] = array(
 				'bool' => array(
 					'should' => array(
@@ -147,13 +158,7 @@ class QtlsController extends AppController
 								'field' => $fdrField
 							)
 						),
-						array(
-							'range' => array(
-								$fdrField => array(
-									'lte' => $fdr_cutoff
-								)
-							)
-						)
+						$cutoffFilterRange
 					)
 				)
 			);
@@ -170,10 +175,9 @@ class QtlsController extends AppController
 				$andFilters[] = $cutoffFilter;
 			}
 		} else {
-			$shouldFDR = array_reduce($cutoffFilters, 'self::__fdrAddShould', array());
 			$andFilters[] = array(
 				'bool' => array(
-					'should' => $shouldFDR
+					'should' => $cutoffFiltersRange
 				)
 			);
 		}
