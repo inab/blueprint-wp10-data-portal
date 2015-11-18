@@ -10,8 +10,8 @@ class Qtl extends AppModel {
 	public function search($c,$q = null,$size = 40,$offset = null) {
 		
 		$searchParams = array(
-			'index' => $BP_INDEX,
-			'type' => $BP_TYPE,
+			'index' => self::$BP_INDEX,
+			'type' => self::$BP_TYPE,
 			'size' => $size
 		);
 		
@@ -30,8 +30,8 @@ class Qtl extends AppModel {
 	public function count($c,$q = null) {
 		
 		$countParams = array(
-			'index' => $BP_INDEX,
-			'type' => $BP_TYPE
+			'index' => self::$BP_INDEX,
+			'type' => self::$BP_TYPE
 		);
 		
 		if(! empty($q)) {
