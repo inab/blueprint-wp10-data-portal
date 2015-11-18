@@ -83,7 +83,7 @@
             <?php foreach ($res['hits']['hits'] as $h):?>
             <tr>
                 <td><?php
-		$coordinates = 'chr'.$h['_source']['CHR'].':'.$h['_source']['start_position'].'-'.$h['_source']['end_position'];
+		$coordinates = $h['_source']['CHR'].':'.$h['_source']['start_position'].'-'.$h['_source']['end_position'];
 		echo $this->Html->link(
 			$coordinates,
 			$ENSEMBL_BASE.'Location/View?r=' . $coordinates,
