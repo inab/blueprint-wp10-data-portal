@@ -69,6 +69,7 @@
     <div class="hidden section divider"></div>
     <table class="ui table">
         <thead>
+            <th>Coordinates</th>
             <th>SNP</th>
             <th>Meth probe</th>
             <th>Gene</th>
@@ -80,6 +81,16 @@
         <tbody>
             <?php foreach ($res['hits']['hits'] as $h):?>
             <tr>
+                <td><?php
+		$coordinates = $h['_source']['chromosome_name'].':'.$h['_source']['chromosome_start'].'-'.$h['_source']['chromosome_end'];
+		echo $this->Html->link(
+			$coordinates,
+			'http://www.ensembl.org/Homo_sapiens/Location/View?r=' . $coordinates,
+			array(
+				'target' => '_blank'
+			)
+		);
+		?></td>
                 <td><?php echo $this->Html->link(
 			$h['_source']['SNP'],
 			'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=' . $h['_source']['SNP'],
