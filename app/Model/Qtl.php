@@ -183,6 +183,8 @@ class Qtl extends AppModel {
 	public function paginate($conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
 		$query = $this->esQueryBuilder($conditions = $conditions, $fields = $fields, $order = $order);
 		
+		$this->log($query,'debug');
+		
 		return $this->search($q = $query,$size = $limit,$offset = ($page - 1)*$limit);
 	}
 	

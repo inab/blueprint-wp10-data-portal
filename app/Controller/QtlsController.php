@@ -59,16 +59,11 @@ class QtlsController extends AppController
 		'limit' => 25
 	);
 	
-	$this->log($this->Paginator->paginate('Qtl'),'debug');
+	$res = $this->Paginator->paginate('Qtl');
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters
 	$filter = array();
-	
-	$query = $this->Qtl->esQueryBuilder($conditions = $params, $fields = null, $order = self::$DEFAULT_SORT_CRITERIA);
-	
-	$this->log($query,'debug');	
-	$res = $this->Qtl->search($q = $query);
 	$this->set('res',$res);
 	$this->set('chromosomes',$this->chromosomes);
 	$this->set('filter',$filter);
