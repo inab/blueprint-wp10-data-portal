@@ -5,8 +5,8 @@ class QtlsController extends AppController
     public $client;
     public $chromosomes;
 	
-	static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
-	static $fdrAddShould = function (array &$cummul_array,array &$value) {
+	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
+	private static function __fdrAddShould(array &$cummul_array,array &$value) {
 		foreach($value['bool']['should'][1] as $should) {
 			$cummul_array[] = $should;
 		}
@@ -170,7 +170,7 @@ class QtlsController extends AppController
 				$andFilters[] = $cutoffFilter;
 			}
 		} else {
-			$shouldFDR = array_reduce($cutoffFilters, $fdrAddShould, array());
+			$shouldFDR = array_reduce($cutoffFilters, '__fdrAddShould', array());
 			$andFilters[] = array(
 				'bool' => array(
 					'should' => $shouldFDR
