@@ -120,9 +120,9 @@
 				'target' => '_blank'
 			)
 		);?></td>
-                <td><?php echo $h['_source']['mon.fdr'];?></td>
-                <td><?php echo $h['_source']['neu.fdr'];?></td>
-                <td><?php echo $h['_source']['tcl.fdr'];?></td>
+                <td><?php echo sprintf("%.4G",$h['_source']['mon.fdr']);?></td>
+                <td><?php echo sprintf("%.4G",$h['_source']['neu.fdr']);?></td>
+                <td><?php echo sprintf("%.4G",$h['_source']['tcl.fdr']);?></td>
             </tr>
             <?php endforeach;?>
         </tbody>
