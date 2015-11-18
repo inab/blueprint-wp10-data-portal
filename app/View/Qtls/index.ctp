@@ -3,6 +3,7 @@
     <h1 class="ui header">Search</h1>
     <div class="ui secondary form segment">
 	<?php
+		$ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
 		echo $this->Form->create();
 	?>
         <div class="three fields">
@@ -82,10 +83,10 @@
             <?php foreach ($res['hits']['hits'] as $h):?>
             <tr>
                 <td><?php
-		$coordinates = $h['_source']['CHR'].':'.$h['_source']['start_position'].'-'.$h['_source']['end_position'];
+		$coordinates = 'chr'.$h['_source']['CHR'].':'.$h['_source']['start_position'].'-'.$h['_source']['end_position'];
 		echo $this->Html->link(
 			$coordinates,
-			'http://www.ensembl.org/Homo_sapiens/Location/View?r=' . $coordinates,
+			$ENSEMBL_BASE.'Location/View?r=' . $coordinates,
 			array(
 				'target' => '_blank'
 			)
@@ -114,7 +115,7 @@
 		);?></td>
                 <td><?php echo $this->Html->link(
 			$h['_source']['ensembl_gene_id'],
-			'http://jan2013.archive.ensembl.org/Homo_sapiens/Gene/Summary?db=core&g=' . $h['_source']['ensembl_gene_id'],
+			$ENSEMBL_BASE.'Gene/Summary?db=core&g=' . $h['_source']['ensembl_gene_id'],
 			array(
 				'target' => '_blank'
 			)
