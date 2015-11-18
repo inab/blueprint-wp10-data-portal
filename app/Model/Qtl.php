@@ -2,24 +2,44 @@
 App::uses('AppModel', 'Model');
 
 class Qtl extends AppModel {
-
-    public $useTable = false;
-
-    public function search($c,$q = null){
-
-	$searchParams = array(
-		'index' => 'meqtls',
-		'type' => 'meqtls',
-		'size' => 40
-	);
+	public $useTable = false;
 	
-	if(! empty($q)) {
-		$searchParams['body'] = $q;
+	private $BP_INDEX = 'meqtls';
+	private $BP_TYPE = 'meqtls';
+	
+	public function search($c,$q = null,$size = 40,$offset = null) {
+		
+		$searchParams = array(
+			'index' => $BP_INDEX,
+			'type' => $BP_TYPE,
+			'size' => $size
+		);
+		
+		if(! empty($offset)) {
+			$searchParams['from'] = $offset;
+		}
+		
+		if(! empty($q)) {
+			$searchParams['body'] = $q;
+		}
+		
+		$res = $c->search($searchParams);
+		return $res;
 	}
-	
-        $res = $c->search($searchParams);
-        return $res;
-    }
 
+	public function count($c,$q = null) {
+		
+		$countParams = array(
+			'index' => $BP_INDEX,
+			'type' => $BP_TYPE
+		);
+		
+		if(! empty($q)) {
+			$searchParams['body'] = $q;
+		}
+		
+		$res = $c->count($searchParams);
+		return $res;
+	}
 }
 ?>
