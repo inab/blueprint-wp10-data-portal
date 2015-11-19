@@ -1,10 +1,14 @@
+<?php
+$ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
+$this->Html->css('blueprint-qtls',array('inline' => false));
+$this->Paginator->options(array('url' => $this->passedArgs));
+?>
+
 <div class="sixteen wide column">
     <div class="hidden section divider"></div>
     <h1 class="ui header">Search</h1>
     <div class="ui secondary form segment">
 	<?php
-		$ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
-		$this->Paginator->options(array('url' => $this->passedArgs));
 		echo $this->Form->create();
 	?>
         <div class="three fields">
@@ -55,12 +59,12 @@
         <div class="two fields">
             <div class="field">
 		<?php
-			echo $this->Form->submit("Search",array('div' => false,'class'=>'ui primary button submit'));
+			echo $this->Form->reset("Reset",array('div' => false,'class'=>'ui secondary button'));
 		?>
             </div>
             <div class="field">
 		<?php
-			echo $this->Form->reset("Reset",array('div' => false,'class'=>'ui secondary button'));
+			echo $this->Form->submit("Search",array('div' => false,'class'=>'ui primary button submit'));
 		?>
             </div>
         </div>
@@ -69,7 +73,14 @@
 </div>
 <div class="sixteen wide column">
     <div class="hidden section divider"></div>
-	<?php echo $this->Paginator->numbers(array('first' => 'First','last'=>'Last')); ?>
+	<div class="two wide column">
+	<?php
+		echo $this->Paginator->first('<<',array('class' => 'paginate first'));
+		echo $this->Paginator->prev('<',array('class' => 'paginate prev'),null,array('class' => 'paginate prev hidden'));
+		echo $this->Paginator->numbers();
+		echo $this->Paginator->next('>',array('class' => 'paginate next'),null,array('class' => 'paginate next hidden'));
+		echo $this->Paginator->last('>>',array('class' => 'paginate last'));
+	?>
     <table class="ui table">
         <thead>
             <th>Coordinates</th>
@@ -129,5 +140,11 @@
             <?php endforeach;?>
         </tbody>
     </table>
-	<?php echo $this->Paginator->numbers(array('first' => 'First','last'=>'Last')); ?>
+	<?php
+		echo $this->Paginator->first('<<',array('class' => 'paginate first'));
+		echo $this->Paginator->prev('<',array('class' => 'paginate prev'),null,array('class' => 'paginate prev hidden'));
+		echo $this->Paginator->numbers();
+		echo $this->Paginator->next('>',array('class' => 'paginate next'),null,array('class' => 'paginate next hidden'));
+		echo $this->Paginator->last('>>',array('class' => 'paginate last'));
+	?>
 </div>

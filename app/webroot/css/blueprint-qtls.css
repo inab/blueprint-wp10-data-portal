@@ -1,0 +1,17 @@
+@chartset "utf-8";
+
+.paginate.prev , .paginate.first {
+	padding-right: 0.5em;
+}
+
+.paginate.next , .paginate.last {
+	padding-left: 0.5em;
+}
+
+.paginate.first , .paginate.last {
+	letter-spacing: -0.25em;
+}
+
+.paginate.first.hidden , .paginate.prev.hidden , .paginate.next.hidden , .paginate.last.hidden {
+	display: none;
+}
