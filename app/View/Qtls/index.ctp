@@ -60,7 +60,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <div class="two fields">
             <div class="field">
 		<?php
-			echo $this->Form->reset("Reset form to search values",array('div' => false,'class'=>'ui secondary button'));
+			echo $this->Form->reset("Reset form to search values",array('div' => false,'class'=>'ui negative button'));
 			echo $this->Form->button("Clear all fields",array('type' => 'button','div' => false,'onclick'=>'clearJQueryForm(this.form)','class'=>'ui secondary button'));
 		?>
             </div>
