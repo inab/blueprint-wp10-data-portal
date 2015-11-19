@@ -71,16 +71,29 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <?php echo $this->Form->end(); ?>
     </div>
 </div>
-<div class="sixteen wide column">
-    <div class="hidden section divider"></div>
-	<div class="two wide column">
-	<?php
-		echo $this->Paginator->first('<<',array('class' => 'paginate first'));
-		echo $this->Paginator->prev('<',array('class' => 'paginate prev'),null,array('class' => 'paginate prev hidden'));
-		echo $this->Paginator->numbers();
-		echo $this->Paginator->next('>',array('class' => 'paginate next'),null,array('class' => 'paginate next hidden'));
-		echo $this->Paginator->last('>>',array('class' => 'paginate last'));
-	?>
+<div class="sixteen wide left aligned column">
+    <div>
+	<div class="ui equal width grid">
+		<div class="left aligned column">
+		<?php
+			echo $this->Paginator->first('<<',array('class' => 'paginate first'));
+			echo $this->Paginator->prev('<',array('class' => 'paginate prev'),null,array('class' => 'paginate prev hidden'));
+			echo $this->Paginator->numbers();
+			echo $this->Paginator->next('>',array('class' => 'paginate next'),null,array('class' => 'paginate next hidden'));
+			echo $this->Paginator->last('>>',array('class' => 'paginate last'));
+		?>
+		</div>
+		<div class="center aligned column">
+		<?php
+			echo $this->Paginator->counter('{:count} results,showing from {:start} to {:end}');
+		?>
+		</div>
+		<div class="right aligned column">
+		<?php
+			echo $this->Paginator->counter('Page {:page} of {:pages}');
+		?>
+		</div>
+	</div>
     <table class="ui table">
         <thead>
             <th>Coordinates</th>
@@ -140,11 +153,26 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <?php endforeach;?>
         </tbody>
     </table>
-	<?php
-		echo $this->Paginator->first('<<',array('class' => 'paginate first'));
-		echo $this->Paginator->prev('<',array('class' => 'paginate prev'),null,array('class' => 'paginate prev hidden'));
-		echo $this->Paginator->numbers();
-		echo $this->Paginator->next('>',array('class' => 'paginate next'),null,array('class' => 'paginate next hidden'));
-		echo $this->Paginator->last('>>',array('class' => 'paginate last'));
-	?>
+	<div class="ui equal width grid">
+		<div class="left aligned column">
+		<?php
+			echo $this->Paginator->first('<<',array('class' => 'paginate first'));
+			echo $this->Paginator->prev('<',array('class' => 'paginate prev'),null,array('class' => 'paginate prev hidden'));
+			echo $this->Paginator->numbers();
+			echo $this->Paginator->next('>',array('class' => 'paginate next'),null,array('class' => 'paginate next hidden'));
+			echo $this->Paginator->last('>>',array('class' => 'paginate last'));
+		?>
+		</div>
+		<div class="center aligned column">
+		<?php
+			echo $this->Paginator->counter('{:count} results,showing from {:start} to {:end}');
+		?>
+		</div>
+		<div class="right aligned column">
+		<?php
+			echo $this->Paginator->counter('Page {:page} of {:pages}');
+		?>
+		</div>
+	</div>
+    </div>
 </div>
