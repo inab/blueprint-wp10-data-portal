@@ -1,6 +1,7 @@
 <?php
 $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
 $this->Html->css('blueprint-qtls',array('inline' => false));
+$this->Html->script('blueprint-qtls',array('inline' => false));
 $this->Paginator->options(array('url' => $this->passedArgs));
 ?>
 
@@ -13,11 +14,11 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 	?>
         <div class="three fields">
 		<?php
-			$attrs = array();
+			$attrs = array('any' => 'Any chromosome');
 			foreach ($chromosomes as $chro) {
 				$attrs[$chro] = 'Chromosome '.$chro;
 			}
-			echo $this->Form->input('chromosome',array('div' => 'field','empty' => 'Any chromosome', 'options' => $attrs, 'label' => false, 'class' => 'ui search dropdown', 'default' => ''));
+			echo $this->Form->input('chromosome',array('div' => 'field','empty' => $attrs['any'], 'options' => $attrs, 'label' => false, 'class' => 'ui search dropdown', 'default' => 'any'));
 			echo $this->Form->input('chromosome_start',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => '\d+', 'placeholder'=>'Start'));
 			echo $this->Form->input('chromosome_end',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => '\d+', 'placeholder'=>'End'));
 		?>
@@ -59,7 +60,8 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <div class="two fields">
             <div class="field">
 		<?php
-			echo $this->Form->reset("Reset",array('div' => false,'class'=>'ui secondary button'));
+			echo $this->Form->reset("Reset form to search values",array('div' => false,'class'=>'ui secondary button'));
+			echo $this->Form->button("Clear all fields",array('type' => 'button','div' => false,'onclick'=>'clearJQueryForm(this.form)','class'=>'ui secondary button'));
 		?>
             </div>
             <div class="field">

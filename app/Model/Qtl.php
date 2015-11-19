@@ -37,11 +37,13 @@ class Qtl extends AppModel {
 				if(!empty($value)) {
 					switch($param_name) {
 						case "chromosome":
-							$andFilters[] = array(
-								'term' => array(
-									'CHR' => $value
-								)
-							);
+							if($value != 'any') {
+								$andFilters[] = array(
+									'term' => array(
+										'CHR' => $value
+									)
+								);
+							}
 							break;
 						case "chromosome_start":
 							$andFilters[] = array(
