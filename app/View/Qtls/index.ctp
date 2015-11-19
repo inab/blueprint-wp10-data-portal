@@ -98,8 +98,8 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <thead>
             <th><?php echo $this->Paginator->sort('CHR','Coordinates'); ?></th>
             <th><?php echo $this->Paginator->sort('SNP','SNP'); ?></th>
-            <th><?php echo $this->Paginator->sort('meth.probe','Meth probe'); ?></th>
-            <th><?php echo $this->Paginator->sort('gid.1','Gene'); ?></th>
+            <th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
+            <th><?php echo $this->Paginator->sort('gene','Gene'); ?></th>
             <th><?php echo $this->Paginator->sort('ensembl_gene_id','Ensembl Id'); ?></th>
             <th><?php echo $this->Paginator->sort('mon.fdr','Monocyte FDR'); ?></th>
             <th><?php echo $this->Paginator->sort('neu.fdr','Neutrophil FDR'); ?></th>

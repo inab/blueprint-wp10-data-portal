@@ -9,13 +9,22 @@ class Qtl extends AppModel {
 	
 	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
 	
-	private static $CHR_SORT_CRITERIA = array(
-		'CHR',
-		'start_position',
-		'end_position'
+	private static $SORT_CRITERIA = array(
+		'CHR' => array('CHR','start_position','end_position'),
+		'SNP' => array('SNP'),
+		'array_probe' => array('meth.probe'),
+		'gene' => array('gid.1'),
+		'ensembl_gene_id' => array('ensembl_gene_id'),
+		'mon.fdr' => array('mon.fdr'),
+		'neu.fdr' => array('neu.fdr'),
+		'tcl.fdr' => array('tcl.fdr')
 	);
 	
 	private $client;
+	
+	public function SortKeys() {
+		return array_keys(self::$SORT_CRITERIA);
+	}
 	
 	protected function esQueryBuilder($conditions = null,$fields = null,$order = null) {
 		$andFilters = array();
@@ -152,19 +161,16 @@ class Qtl extends AppModel {
 		
 		$sortCriteria = array();
 		if(! empty($order)) {
-			if(array_key_exists('CHR',$order)) {
-				$orderCriteria = $order['CHR'];
-				$order = array();
-				foreach(self::$CHR_SORT_CRITERIA as $attr) {
-					$order[$attr] = $orderCriteria;
-				}
-			}
 			foreach($order as $orderKey => $orderCriteria) {
-				$sortCriteria[] = array(
-					$orderKey => array(
-						'order' => $orderCriteria
-					)
-				);
+				if(array_key_exists($orderKey,self::$SORT_CRITERIA)) {
+					foreach(self::$SORT_CRITERIA[$orderKey] as $attr) {
+						$sortCriteria[] = array(
+							$attr => array(
+								'order' => $orderCriteria
+							)
+						);
+					}
+				}
 			}
 		}
 		

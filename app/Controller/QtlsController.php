@@ -4,13 +4,18 @@ class QtlsController extends AppController
 	public $helpers = array('Html', 'Form');
 	public $components = array('Paginator');
 	
-	public $chromosomes;
+	private $chromosomes;
 	
+	private $sortKeys;
+	
+	/*
 	private static $DEFAULT_SORT_CRITERIA = array(
 		'CHR' => 'asc',
 		'start_position' => 'asc',
 		'end_position' => 'asc'
 	);
+	*/
+	private static $DEFAULT_SORT_CRITERIA = array('CHR');
 	
 	public $paginate = array(
 		'limit' => 25
@@ -28,6 +33,10 @@ class QtlsController extends AppController
 		$elasticsearchConfig['hosts'] = $hosts;
 	}
 	$this->Qtl->setupClient($elasticsearchConfig);
+	
+	// We get this only once!
+	$this->sortKeys = $this->Qtl->SortKeys();
+	
         $chroJson = '{
 		"aggs": {
 			"chros": {
@@ -76,7 +85,7 @@ class QtlsController extends AppController
 		'limit' => 25
 	);
 	
-	$res = $this->Paginator->paginate('Qtl',$params,array('CHR','SNP','meth.probe','gid.1','ensembl_gene_id','mon.fdr','neu.fdr','tcl.fdr'));
+	$res = $this->Paginator->paginate('Qtl',$params,$this->sortKeys);
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters
