@@ -85,7 +85,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		</div>
 		<div class="center aligned column">
 		<?php
-			echo $this->Paginator->counter('{:count} results,showing from {:start} to {:end}');
+			echo $this->Paginator->counter('{:count} results, showing from {:start} to {:end}');
 		?>
 		</div>
 		<div class="right aligned column">
@@ -96,14 +96,14 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 	</div>
     <table class="ui table">
         <thead>
-            <th>Coordinates</th>
-            <th>SNP</th>
-            <th>Meth probe</th>
-            <th>Gene</th>
-            <th>Ensembl Id</th>
-            <th>Monocyte FDR</th>
-            <th>Neutrophil FDR</th>
-            <th>T-cell FDR</th>
+            <th><?php echo $this->Paginator->sort('CHR','Coordinates'); ?></th>
+            <th><?php echo $this->Paginator->sort('SNP','SNP'); ?></th>
+            <th><?php echo $this->Paginator->sort('meth.probe','Meth probe'); ?></th>
+            <th><?php echo $this->Paginator->sort('gid.1','Gene'); ?></th>
+            <th><?php echo $this->Paginator->sort('ensembl_gene_id','Ensembl Id'); ?></th>
+            <th><?php echo $this->Paginator->sort('mon.fdr','Monocyte FDR'); ?></th>
+            <th><?php echo $this->Paginator->sort('neu.fdr','Neutrophil FDR'); ?></th>
+            <th><?php echo $this->Paginator->sort('tcl.fdr','T-cell FDR'); ?></th>
         </thead>
         <tbody>
             <?php foreach ($res['hits']['hits'] as $h):?>
@@ -165,7 +165,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		</div>
 		<div class="center aligned column">
 		<?php
-			echo $this->Paginator->counter('{:count} results,showing from {:start} to {:end}');
+			echo $this->Paginator->counter('{:count} results, showing from {:start} to {:end}');
 		?>
 		</div>
 		<div class="right aligned column">

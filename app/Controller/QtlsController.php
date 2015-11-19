@@ -76,7 +76,7 @@ class QtlsController extends AppController
 		'limit' => 25
 	);
 	
-	$res = $this->Paginator->paginate('Qtl',$params,array('CHR'));
+	$res = $this->Paginator->paginate('Qtl',$params,array('CHR','SNP','meth.probe','gid.1','ensembl_gene_id','mon.fdr','neu.fdr','tcl.fdr'));
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters

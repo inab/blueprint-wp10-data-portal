@@ -9,6 +9,12 @@ class Qtl extends AppModel {
 	
 	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
 	
+	private static $CHR_SORT_CRITERIA = array(
+		'CHR',
+		'start_position',
+		'end_position'
+	);
+	
 	private $client;
 	
 	protected function esQueryBuilder($conditions = null,$fields = null,$order = null) {
@@ -146,6 +152,13 @@ class Qtl extends AppModel {
 		
 		$sortCriteria = array();
 		if(! empty($order)) {
+			if(array_key_exists('CHR',$order)) {
+				$orderCriteria = $order['CHR'];
+				$order = array();
+				foreach(self::$CHR_SORT_CRITERIA as $attr) {
+					$order[$attr] = $orderCriteria;
+				}
+			}
 			foreach($order as $orderKey => $orderCriteria) {
 				$sortCriteria[] = array(
 					$orderKey => array(
