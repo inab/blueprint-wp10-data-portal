@@ -15,3 +15,20 @@
 .paginate.first.hidden , .paginate.prev.hidden , .paginate.next.hidden , .paginate.last.hidden {
 	display: none;
 }
+
+th a {
+	font-weight: normal;
+	color: #458AC6;
+}
+
+th a.asc , th a.desc {
+	font-weight: bold;
+}
+
+th a.asc:after {
+	content: ' ⇣';
+}
+
+th a.desc:after {
+	content: ' ⇡';
+}

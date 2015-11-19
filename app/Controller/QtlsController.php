@@ -8,14 +8,7 @@ class QtlsController extends AppController
 	
 	private $sortKeys;
 	
-	/*
-	private static $DEFAULT_SORT_CRITERIA = array(
-		'CHR' => 'asc',
-		'start_position' => 'asc',
-		'end_position' => 'asc'
-	);
-	*/
-	private static $DEFAULT_SORT_CRITERIA = array('CHR');
+	private static $DEFAULT_SORT_CRITERIA = array('CHR' => 'asc');
 	
 	public $paginate = array(
 		'limit' => 25
