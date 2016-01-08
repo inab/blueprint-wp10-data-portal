@@ -98,20 +98,34 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 	</div>
     <table class="ui table">
         <thead>
+            <th>Cell Type</th>
+            <th>Qtl Source</th>
             <th><?php echo $this->Paginator->sort('CHR','Coordinates'); ?></th>
             <th><?php echo $this->Paginator->sort('SNP','SNP'); ?></th>
-            <th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
+            <th><?php echo $this->Paginator->sort('Pos','pos'); ?></th>
+            <th><?php echo $this->Paginator->sort('pv','P-value'); ?></th>
+            <th><?php echo $this->Paginator->sort('qv','Q-value'); ?></th>
+            <!-- <th>Qtl Id</th> -->
             <th><?php echo $this->Paginator->sort('gene','Gene'); ?></th>
-            <th><?php echo $this->Paginator->sort('ensembl_gene_id','Ensembl Id'); ?></th>
-            <th><?php echo $this->Paginator->sort('mon.fdr','Monocyte FDR'); ?></th>
-            <th><?php echo $this->Paginator->sort('neu.fdr','Neutrophil FDR'); ?></th>
-            <th><?php echo $this->Paginator->sort('tcl.fdr','T-cell FDR'); ?></th>
+            <th><?php echo $this->Paginator->sort('ensembl_gene_id','Ensembl Gene Id'); ?></th>
+            <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th>
+            <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Ensembl Transcript Id'); ?></th>
+            <th><?php echo $this->Paginator->sort('histone','Histone'); ?></th>
+            <th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
         </thead>
         <tbody>
-            <?php foreach ($res['hits']['hits'] as $h):?>
+            <?php foreach ($res['hits']['hits'] as $h): ?>
             <tr>
                 <td><?php
-		$coordinates = $h['_source']['CHR'].':'.$h['_source']['start_position'].'-'.$h['_source']['end_position'];
+		$cellType = $h['_source']['cell_type'];
+		echo $this->Html->tag('span',$cellType);
+		?></td>
+                <td><?php
+		$qtlSource = $h['_source']['qtl_source'];
+		echo $this->Html->tag('span',$qtlSource);
+		?></td>
+                <td><?php
+		$coordinates = $h['_source']['gene_chrom'].':'.$h['_source']['gene_start'].'-'.$h['_source']['gene_end'];
 		echo $this->Html->link(
 			$coordinates,
 			$ENSEMBL_BASE.'Location/View?r=' . $coordinates,
@@ -120,37 +134,74 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			)
 		);
 		?></td>
-                <td><?php echo $this->Html->link(
-			$h['_source']['SNP'],
-			'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=' . $h['_source']['SNP'],
-			array(
-				'target' => '_blank'
-			)
-		);?></td>
-                <td><?php echo $this->Html->link(
-			$h['_source']['meth.probe'],
-			'http://genome-euro.ucsc.edu/cgi-bin/hgTracks?clade=mammal&org=Human&db=hg19&position=' . $h['_source']['meth.probe'],
-			array(
-				'target' => '_blank'
-			)
-		);?></td>
-                <td><?php echo $this->Html->link(
-			$h['_source']['gid.1'],
-			'http://blueprint-data.bsc.es/#/?q=gene:' . $h['_source']['ensembl_gene_id'] . '&w=500',
-			array(
-				'target' => '_blank'
-			)
-		);?></td>
-                <td><?php echo $this->Html->link(
-			$h['_source']['ensembl_gene_id'],
-			$ENSEMBL_BASE.'Gene/Summary?db=core&g=' . $h['_source']['ensembl_gene_id'],
-			array(
-				'target' => '_blank'
-			)
-		);?></td>
-                <td><?php if(isset($h['_source']['mon.fdr'])) { echo sprintf("%.4G",$h['_source']['mon.fdr']); }?></td>
-                <td><?php if(isset($h['_source']['neu.fdr'])) { echo sprintf("%.4G",$h['_source']['neu.fdr']); }?></td>
-                <td><?php if(isset($h['_source']['tcl.fdr'])) { echo sprintf("%.4G",$h['_source']['tcl.fdr']); }?></td>
+                <td><?php
+		if(isset($h['_source']['snp_id'])) {	
+			echo $this->Html->link(
+				$h['_source']['snp_id'],
+				'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=' . $h['_source']['snp_id'],
+				array(
+					'target' => '_blank'
+				)
+			);
+		}
+		?></td>
+                <td><?php if(isset($h['_source']['pos'])) { echo sprintf("%u",$h['_source']['pos']); }?></td>
+                <td><?php if(isset($h['_source']['pv'])) { echo sprintf("%.4G",$h['_source']['pv']); }?></td>
+                <td><?php if(isset($h['_source']['qv'])) { echo sprintf("%.4G",$h['_source']['qv']); }?></td>
+                <!-- <td><?php
+		$qtlId = $h['_source']['gene_id'];
+		echo $this->Html->tag('span',$qtlId);
+		?></td> -->
+                <td><?php
+		if(isset($h['_source']['gene_name'])) {
+			echo $this->Html->link(
+				$h['_source']['gene_name'],
+				'http://blueprint-data.bsc.es/#/?q=gene:' . $h['_source']['ensemblGeneId'] . '&w=500',
+				array(
+					'target' => '_blank'
+				)
+			);
+		}
+		?></td>
+                <td><?php
+		if(isset($h['_source']['ensemblGeneId'])) {
+			echo $this->Html->link(
+				$h['_source']['ensemblGeneId'],
+				$ENSEMBL_BASE.'Gene/Summary?db=core&g=' . $h['_source']['ensemblGeneId'],
+				array(
+					'target' => '_blank'
+				)
+			);
+		}
+		?></td>
+		<td><?php if(isset($h['_source']['exonNumber'])) { echo $h['_source']['exonNumber']; }?></td>
+                <td><?php
+		if(isset($h['_source']['ensemblTranscriptId'])) {
+			$ensemblTranscriptIds = is_array($h['_source']['ensemblTranscriptId']) ? $h['_source']['ensemblTranscriptId'] : array($h['_source']['ensemblTranscriptId']);
+			foreach($ensemblTranscriptIds as $ensemblTranscriptId) {
+				echo $this->Html->link(
+					$ensemblTranscriptId,
+					$ENSEMBL_BASE.'Transcript/Summary?db=core&t=' . $ensemblTranscriptId,
+					array(
+						'target' => '_blank'
+					)
+				);
+				echo $this->Html->tag('br');
+			}
+		}
+		?></td>
+                <td><?php if(isset($h['_source']['histone'])) { echo $this->Html->tag('span',$h['_source']['histone']); }?></td>
+                <td><?php
+		if(isset($h['_source']['probeId'])) {
+			echo $this->Html->link(
+				$h['_source']['probeId'],
+				'http://genome-euro.ucsc.edu/cgi-bin/hgTracks?clade=mammal&org=Human&db=hg19&position=' . $h['_source']['probeId'],
+				array(
+					'target' => '_blank'
+				)
+			);
+		}
+		?></td>
             </tr>
             <?php endforeach;?>
         </tbody>

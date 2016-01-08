@@ -34,7 +34,7 @@ class QtlsController extends AppController
 		"aggs": {
 			"chros": {
 				"terms": {
-					"field": "CHR",
+					"field": "gene_chrom",
 					"size": 0
 				}
 			}

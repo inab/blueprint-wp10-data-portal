@@ -4,20 +4,28 @@ App::uses('AppModel', 'Model');
 class Qtl extends AppModel {
 	public $useTable = false;
 	
-	private static $BP_INDEX = 'meqtls';
-	private static $BP_TYPE = 'meqtls';
+	private static $BP_INDEX = 'wp10qtls';
+	private static $BP_TYPE = 'qtl';
+	private static $BP_BULK_TYPE = 'bulkqtl';
 	
-	private static $fdrFields = array('mon.fdr','neu.fdr','tcl.fdr');
+	private static $fdrFields = array('pv','qv');
 	
 	private static $SORT_CRITERIA = array(
-		'CHR' => array('CHR','start_position','end_position'),
-		'SNP' => array('SNP'),
-		'array_probe' => array('meth.probe'),
-		'gene' => array('gid.1'),
-		'ensembl_gene_id' => array('ensembl_gene_id'),
-		'mon.fdr' => array('mon.fdr'),
-		'neu.fdr' => array('neu.fdr'),
-		'tcl.fdr' => array('tcl.fdr')
+		'cell_type' => array('cell_type'),
+		'qtl_source' => array('qtl_source'),
+		'id' => array('gene_id'),
+		'SNP' => array('snp_id'),
+		'CHR' => array('gene_chrom','gene_start','gene_end'),
+		'SNP_pos' => array('gene_chrom','pos'),
+		'gene' => array('gene_name'),
+		'ensembl_gene_id' => array('ensemblGeneId'),
+		'ensembl_transcript_id' => array('ensemblTranscriptId'),
+		'exon_number' => array('gene_chrom','gene_start','gene_end','exonNumber'),
+		'histone' => array('gene_chrom','gene_start','gene_end','histone'),
+		'array_probe' => array('probeId'),
+		'pv' => array('pv'),
+		'qv' => array('qv'),
+		'F' => array('F')
 	);
 	
 	private $client;
@@ -40,7 +48,7 @@ class Qtl extends AppModel {
 							if($value != 'any') {
 								$andFilters[] = array(
 									'term' => array(
-										'CHR' => $value
+										'gene_chrom' => $value
 									)
 								);
 							}
@@ -48,7 +56,7 @@ class Qtl extends AppModel {
 						case "chromosome_start":
 							$andFilters[] = array(
 								'range' => array(
-									'start_position' => array(
+									'gene_start' => array(
 										'gte' => $value
 									)
 								)
@@ -57,30 +65,31 @@ class Qtl extends AppModel {
 						case "chromosome_end":
 							$andFilters[] = array(
 								'range' => array(
-									'end_position' => array(
+									'gene_end' => array(
 										'lte' => $value
 									)
 								)
 							);
 							break;
+						# To be redesigned
 						case "gene":
 							$andQueries[] = array(
 								'match' => array(
-									'UCSC_RefGene_Name' => $value
+									'gene_name' => $value
 								)
 							);
 							break;
 						case "SNP":
 							$andFilters[] = array(
 								'term' => array(
-									'SNP' => $value
+									'snp_id' => $value
 								)
 							);
 							break;
 						case "array_probe":
 							$andFilters[] = array(
 								'term' => array(
-									'meth.probe' => $value
+									'probeId' => $value
 								)
 							);
 							break;
@@ -204,7 +213,7 @@ class Qtl extends AppModel {
 	public function paginate($conditions, $fields, $order, $limit, $page = 1, $recursive = null, $extra = array()) {
 		$query = $this->esQueryBuilder($conditions = $conditions, $fields = $fields, $order = $order);
 		
-		$this->log($query,'debug');
+		//$this->log($query,'debug');
 		
 		return $this->search($q = $query,$size = $limit,$offset = ($page - 1)*$limit);
 	}
