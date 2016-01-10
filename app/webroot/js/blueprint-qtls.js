@@ -30,3 +30,22 @@ function clearJQueryForm(theForm) {
 	$form.find('.dropdown').dropdown('clear');
 	$form.find('input:radio, input:checkbox').removeAttr('checked').removeAttr('selected');
 }
+
+// Popups initialization
+$(document)
+  .ready(function() {
+	$('.button')
+		.popup()
+	;
+	$('.message')
+		.popup()
+	;
+	$('.info.circle.icon')
+		.popup({
+			hoverable: true,
+			inline: true,
+			lastResort: true
+		})
+	;
+  })
+;

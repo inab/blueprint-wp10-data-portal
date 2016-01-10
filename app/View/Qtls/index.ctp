@@ -43,18 +43,22 @@ $this->Paginator->options(array('url' => $this->passedArgs));
                 </div>
             </div>
             <div class="inline field">
-                <div class="ui slider checkbox">
+		Show traits from 
 		<?php
-			echo $this->Form->checkbox('rna_qtls');
-			echo $this->Form->label('rna_qtls','RNA based QTLs');
+			$anyTrait = 'any QTL identification source';
+			$traitAttrs = array(
+				'gene' => 'gene',
+				'exon' => 'exon',
+				'cufflinks' => 'Cufflinks',
+				'meth' => 'methylation array',
+				'sj' => 'splice junction',
+				'psi' => 'percent splice-in',
+				'K27AC' => 'H3K27AC ChIP-Seq peaks',
+				'K4ME1'=> 'H3K4ME1 ChIP-Seq peaks',
+				'sqtls' => 'sQTLseekeR'
+			);
+			echo $this->Form->select('qtl_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
 		?>
-                </div>
-                <div class="ui slider checkbox">
-		<?php
-			echo $this->Form->checkbox('meth_qtls');
-			echo $this->Form->label('meth_qtls','Meth QTLs');
-		?>
-                </div>
             </div>
         </div>
         <div class="two fields">
@@ -102,16 +106,19 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <th>Qtl Source</th>
             <th><?php echo $this->Paginator->sort('CHR','Coordinates'); ?></th>
             <th><?php echo $this->Paginator->sort('SNP','SNP'); ?></th>
-            <th><?php echo $this->Paginator->sort('Pos','pos'); ?></th>
+            <!-- <th><?php echo $this->Paginator->sort('Pos','pos'); ?></th> -->
             <th><?php echo $this->Paginator->sort('pv','P-value'); ?></th>
             <th><?php echo $this->Paginator->sort('qv','Q-value'); ?></th>
             <!-- <th>Qtl Id</th> -->
             <th><?php echo $this->Paginator->sort('gene','Gene'); ?></th>
             <th><?php echo $this->Paginator->sort('ensembl_gene_id','Ensembl Gene Id'); ?></th>
-            <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th>
+            <!-- <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th> -->
             <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Ensembl Transcript Id'); ?></th>
+		<!--
             <th><?php echo $this->Paginator->sort('histone','Histone'); ?></th>
             <th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
+		-->
+		<th><i class="info icon" data-position="left center"></i></th>
         </thead>
         <tbody>
             <?php foreach ($res['hits']['hits'] as $h): ?>
@@ -145,7 +152,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			);
 		}
 		?></td>
-                <td><?php if(isset($h['_source']['pos'])) { echo sprintf("%u",$h['_source']['pos']); }?></td>
+                <!-- <td><?php if(isset($h['_source']['pos'])) { echo sprintf("%u",$h['_source']['pos']); }?></td> -->
                 <td><?php if(isset($h['_source']['pv'])) { echo sprintf("%.4G",$h['_source']['pv']); }?></td>
                 <td><?php if(isset($h['_source']['qv'])) { echo sprintf("%.4G",$h['_source']['qv']); }?></td>
                 <!-- <td><?php
@@ -174,7 +181,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			);
 		}
 		?></td>
-		<td><?php if(isset($h['_source']['exonNumber'])) { echo $h['_source']['exonNumber']; }?></td>
+		<!-- <td><?php if(isset($h['_source']['exonNumber'])) { echo $h['_source']['exonNumber']; }?></td> -->
                 <td><?php
 		if(isset($h['_source']['ensemblTranscriptId'])) {
 			$ensemblTranscriptIds = is_array($h['_source']['ensemblTranscriptId']) ? $h['_source']['ensemblTranscriptId'] : array($h['_source']['ensemblTranscriptId']);
@@ -190,6 +197,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			}
 		}
 		?></td>
+		<!--
                 <td><?php if(isset($h['_source']['histone'])) { echo $this->Html->tag('span',$h['_source']['histone']); }?></td>
                 <td><?php
 		if(isset($h['_source']['probeId'])) {
@@ -202,6 +210,56 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			);
 		}
 		?></td>
+		-->
+		<td>
+			<i class="info circle icon" data-position="left center"></i>
+			<div class="ui flowing popup">
+				<div class="ui list">
+			<?php
+			echo $this->Html->div('item',$this->Html->div('ui blue horizontal large label','Additional data'));
+			$qtlId = $h['_source']['gene_id'];
+			echo $this->Html->div('item',$this->Html->div('ui horizontal label','Trait Id').$this->Html->tag('span',$qtlId));
+			if(isset($h['_source']['pos'])) { echo $this->Html->div('item',$this->Html->div('ui horizonal label','SNP pos').$this->Html->tag('span',sprintf("%u",$h['_source']['pos']))); }
+			if(isset($h['_source']['exonNumber'])) { echo $this->Html->div('item',$this->Html->div('ui horizonal label','Exon').$this->Html->tag('span',$h['_source']['exonNumber'])); }
+			if(isset($h['_source']['histone'])) { echo $this->Html->div('item',$this->Html->div('ui horizonal label','Histone').$this->Html->tag('span',$h['_source']['histone'])); }
+			if(isset($h['_source']['probeId'])) {
+				echo $this->Html->div('item',$this->Html->div('ui horizonal label','Probe Id').$this->Html->link(
+					$h['_source']['probeId'],
+					'http://genome-euro.ucsc.edu/cgi-bin/hgTracks?clade=mammal&org=Human&db=hg19&position=' . $h['_source']['probeId'],
+					array(
+						'target' => '_blank'
+					)
+				));
+			}
+			if(isset($h['_source']['splice'])) {
+				$splice = is_array($h['_source']['splice']) ? $h['_source']['splice'] : array($h['_source']['splice']);
+				echo $this->Html->div('item',$this->Html->div('ui horizontal label','Splice coords').$this->Html->div('ui bulleted list',join('',array_map(function ($spItem) {
+	return $this->Html->div('item',$spItem);
+},$splice))));
+			}
+			$metrics = array();
+			if(isset($h['_source']['F'])) {
+				$metrics['F'] = $h['_source']['F'];
+			}
+			if(isset($h['_source']['metrics'])) {
+				$metrics += $h['_source']['metrics'];
+			}
+			if(!empty($metrics)) {
+				echo $this->Html->div('item',$this->Html->div('ui label','Other Metrics').
+					'<table class="ui definition table">'.$this->Html->tableCells(
+						array_map(function($key,$val) {
+								return array($key,sprintf("%.6G",$val));
+							},
+							array_keys($metrics),
+							array_values($metrics)
+						)
+					).'</table>'
+				);
+			}
+			?>
+				</div>
+			</div>
+		</td>
             </tr>
             <?php endforeach;?>
         </tbody>

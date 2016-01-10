@@ -6,6 +6,7 @@ class Qtl extends AppModel {
 	
 	private static $BP_INDEX = 'wp10qtls';
 	private static $BP_TYPE = 'qtl';
+	private static $BP_BULK_INDEX = 'wp10bulkqtls';
 	private static $BP_BULK_TYPE = 'bulkqtl';
 	
 	private static $fdrFields = array('pv','qv');
@@ -98,6 +99,13 @@ class Qtl extends AppModel {
 							break;
 						case "all_fdrs":
 							$all_fdrs = $value;
+							break;
+						case "qtl_source":
+							$andFilters[] = array(
+								'terms' => array(
+									'qtl_source' => $value
+								)
+							);
 							break;
 						default:
 							if(!in_array($param_name, array('page','sort','direction','limit'))){
