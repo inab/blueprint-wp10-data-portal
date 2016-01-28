@@ -88,6 +88,7 @@ class QtlsController extends AppController
 	$this->set('filter',$filter);
     }
 	
+	// Based on http://blog.ekini.net/2012/10/10/cakephp-2-x-csv-file-download-from-a-database-query/
 	public function bulkqtl($cell_type = null,$qtl_source = null,$qtl_id = null) {
 		$qtl_id = strtr($qtl_id,'_',':');
 		if(!$cell_type || !$qtl_source || !$qtl_id) {

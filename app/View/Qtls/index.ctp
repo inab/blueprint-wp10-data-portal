@@ -256,6 +256,19 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 					).'</table>'
 				);
 			}
+			if($qtlSource!='sqtls') {
+				echo $this->Html->link(
+					'Raw data for this QTL',
+					array(
+						'controller' => 'qtls',
+						'action' => 'bulkqtl',
+						'full_base' => true,
+						// Now, the parameters for the link
+						$cellType,$qtlSource,strtr($qtlId,':','_')
+					),
+					array('target' => '_blank')
+				);
+			}
 			?>
 				</div>
 			</div>
