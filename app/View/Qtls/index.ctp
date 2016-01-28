@@ -212,7 +212,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		?></td>
 		-->
 		<td>
-			<i class="info circle blue icon" data-position="left center"></i>
+			<i class="link info circle blue icon" data-position="left center"></i>
 			<div class="ui flowing popup">
 				<div class="ui list">
 			<?php
