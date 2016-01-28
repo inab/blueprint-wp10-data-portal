@@ -271,5 +271,44 @@ class Qtl extends AppModel {
 		$res = $this->client->count($countParams);
 		return $res;
 	}
+
+	public function fetchBulkQtl($cell_type,$qtl_source,$qtl_id) {
+		$searchParams = array(
+			'index' => self::$BP_BULK_INDEX,
+			'type' => self::$BP_BULK_TYPE,
+			'size' => 10,
+			'body' => array(
+				'query' => array(
+					'filtered' => array(
+						'filter' => array(
+							'bool' => array(
+								'must' => array(
+									array(
+										'term' => array(
+											'cell_type' => $cell_type
+										)
+									),
+									array(
+										'term' => array(
+											'qtl_source' => $qtl_source
+										)
+									),
+									array(
+										'term' => array(
+											'gene_id' => $qtl_id
+										)
+									)
+								)
+							)
+						)
+					)
+				)
+			)
+		);
+		
+		$res = $this->client->search($searchParams);
+
+		return $res;
+	}
 }
 ?>

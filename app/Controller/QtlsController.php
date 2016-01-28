@@ -87,6 +87,46 @@ class QtlsController extends AppController
 	$this->set('chromosomes',$this->chromosomes);
 	$this->set('filter',$filter);
     }
+	
+	public function bulkqtl($cell_type = null,$qtl_source = null,$qtl_id = null) {
+		$qtl_id = strtr($qtl_id,'_',':');
+		if(!$cell_type || !$qtl_source || !$qtl_id) {
+			throw new NotFoundException(__('Invalid query parameters'));
+		}
+
+		$bulkQtlRes = $this->Qtl->fetchBulkQtl($cell_type,$qtl_source,$qtl_id);
+		if($bulkQtlRes['hits']['total'] == 0) {
+			throw new NotFoundException(__('QTL not found'));
+		}
+
+		$csv_file = fopen('php://output', 'w');
+		$filename = "${cell_type}_${qtl_source}_${qtl_id}.tsv";
+		header('Content-type: text/tab-separated-values');
+		header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+		$header_row = array('# '.'cell_type','qtl_source','qtl_id','rsid','pos','p_value','beta','p-bonferroni','q-value(FDR)');
+		fputs($csv_file,implode("\t",$header_row)."\n");
+		
+		# Here we print the data from the database by chunks
+		foreach($bulkQtlRes['hits']['hits'] as $hit) {
+			$read_cell_type = $hit['_source']['cell_type'];
+			$read_qtl_source = $hit['_source']['qtl_source'];
+			$read_qtl_id = $hit['_source']['gene_id'];
+			$bulk_qtl_prefix = implode("\t",array($read_cell_type,$read_qtl_source,$read_qtl_id))."\t";
+			foreach(explode("\n",$hit['_source']['qtl_data']) as $line) {
+				if(strlen($line) > 0) {
+					$line = str_replace('\t',"\t",$line);
+					fputs($csv_file,$bulk_qtl_prefix.$line."\n");
+				}
+			}
+		}
+
+		fclose($csv_file);
+
+		$this->layout = false;
+		$this->render(false);
+		return false;
+	}
 }
 
 ?>
