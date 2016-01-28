@@ -61,7 +61,6 @@ class QtlsController extends AppController
 		$params = $this->passedArgs['search'];
 		$this->request->data['Qtl'] = $params;
 	}
-	$this->log($params,'debug');
 	$res = array();
 	
 	if(isset($params)) {
