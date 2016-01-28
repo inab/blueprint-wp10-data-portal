@@ -48,6 +48,7 @@ class QtlsController extends AppController
 	
     public function index() {
 	$params = null;
+	$this->log('Enter','debug');
 	if(isset($this->request->data['Qtl'])) {
 		$this->redirect(array('search'=> $this->request->data['Qtl'], 'page' => 1));
 	}
@@ -60,25 +61,29 @@ class QtlsController extends AppController
 		$params = $this->passedArgs['search'];
 		$this->request->data['Qtl'] = $params;
 	}
+	$this->log($params,'debug');
+	$res = array();
 	
-	/*
-	if(isset($this->request->params['named']) && count($this->request->params['named']) > 0) {
-		$params = $this->request->params['named'];
-	} else if(isset($this->request->data['Qtl'])) {
-		$params = $this->request->data['Qtl'];
-	} else {
-		$params = $this->request->data;
-	}
-	*/
+	if(isset($params)) {
+		/*
+		if(isset($this->request->params['named']) && count($this->request->params['named']) > 0) {
+			$params = $this->request->params['named'];
+		} else if(isset($this->request->data['Qtl'])) {
+			$params = $this->request->data['Qtl'];
+		} else {
+			$params = $this->request->data;
+		}
+		*/
 
-	$this->Paginator->settings = array(
-	//	'conditions' => $params,
-		'fields' => null,
-		'order' => self::$DEFAULT_SORT_CRITERIA,
-		'limit' => 25
-	);
-	
-	$res = $this->Paginator->paginate('Qtl',$params,$this->sortKeys);
+		$this->Paginator->settings = array(
+		//	'conditions' => $params,
+			'fields' => null,
+			'order' => self::$DEFAULT_SORT_CRITERIA,
+			'limit' => 25
+		);
+		
+		$res = $this->Paginator->paginate('Qtl',$params,$this->sortKeys);
+	}
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters

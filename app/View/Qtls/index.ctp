@@ -77,6 +77,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <?php echo $this->Form->end(); ?>
     </div>
 </div>
+<?php if(isset($res['hits'])):?>
 <div class="sixteen wide left aligned column">
     <div>
 	<div class="ui equal width grid">
@@ -303,3 +304,4 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 	</div>
     </div>
 </div>
+<?php endif; ?>
