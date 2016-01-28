@@ -258,7 +258,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			}
 			if($qtlSource!='sqtls') {
 				echo $this->Html->link(
-					'Raw data for this QTL',
+					$this->Html->tag('i','',array('class' => 'download icon')).' Raw data for this QTL',
 					array(
 						'controller' => 'qtls',
 						'action' => 'bulkqtl',
@@ -266,7 +266,10 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 						// Now, the parameters for the link
 						$cellType,$qtlSource,strtr($qtlId,':','_')
 					),
-					array('target' => '_blank')
+					array(
+						'target' => '_blank',
+						'escape' => false
+					)
 				);
 			}
 			?>
