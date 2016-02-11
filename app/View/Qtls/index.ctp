@@ -117,8 +117,8 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Ensembl Transcript Id'); ?></th>
 		<!--
             <th><?php echo $this->Paginator->sort('histone','Histone'); ?></th>
-            <th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
 		-->
+		<th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
 		<th><i class="info icon" data-position="left center"></i></th>
         </thead>
         <tbody>
@@ -162,9 +162,14 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		?></td> -->
                 <td><?php
 		if(isset($h['_source']['gene_name'])) {
+			$ensemblGeneIdTrimmed = $h['_source']['ensemblGeneId'];
+			$ensemblDotPos = strrpos($ensemblGeneIdTrimmed,'.');
+			if($ensemblDotPos) {
+				$ensemblGeneIdTrimmed = substr($ensemblGeneIdTrimmed,0,$ensemblDotPos);
+			}
 			echo $this->Html->link(
 				$h['_source']['gene_name'],
-				'http://blueprint-data.bsc.es/#/?q=gene:' . $h['_source']['ensemblGeneId'] . '&w=500',
+				'http://blueprint-data.bsc.es/#/?q=gene:' . $ensemblGeneIdTrimmed . '&w=500',
 				array(
 					'target' => '_blank'
 				)
@@ -200,6 +205,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		?></td>
 		<!--
                 <td><?php if(isset($h['_source']['histone'])) { echo $this->Html->tag('span',$h['_source']['histone']); }?></td>
+		-->
                 <td><?php
 		if(isset($h['_source']['probeId'])) {
 			echo $this->Html->link(
@@ -211,7 +217,6 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			);
 		}
 		?></td>
-		-->
 		<td>
 			<i class="link info circle blue icon" data-position="left center"></i>
 			<div class="ui flowing popup">
