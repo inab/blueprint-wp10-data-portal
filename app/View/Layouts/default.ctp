@@ -35,7 +35,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		echo $this->fetch('script');
 	?>
 </head>
-<body>
+<body style="overflow-x: auto;">
 	<div class="ui primary inverted menu">
 	  <div class="header item">BLUEPRINT WP10</div>
 	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"qtls","action"=>"index"))?>">Search</a>
