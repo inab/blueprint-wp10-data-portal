@@ -162,29 +162,39 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		?></td> -->
                 <td><?php
 		if(isset($h['_source']['gene_name'])) {
-			$ensemblGeneIdTrimmed = $h['_source']['ensemblGeneId'];
-			$ensemblDotPos = strrpos($ensemblGeneIdTrimmed,'.');
-			if($ensemblDotPos) {
-				$ensemblGeneIdTrimmed = substr($ensemblGeneIdTrimmed,0,$ensemblDotPos);
+			$gene_names = is_array($h['_source']['gene_name']) ? $h['_source']['gene_name'] : array($h['_source']['gene_name']);
+			$ensemblGeneIds = is_array($h['_source']['ensemblGeneId']) ? $h['_source']['ensemblGeneId'] : array($h['_source']['ensemblGeneId']);
+			
+			foreach($ensemblGeneIds as $indexEns => $ensemblGeneId) {
+				$ensemblGeneIdTrimmed = $ensemblGeneId;
+				$ensemblDotPos = strrpos($ensemblGeneIdTrimmed,'.');
+				if($ensemblDotPos) {
+					$ensemblGeneIdTrimmed = substr($ensemblGeneIdTrimmed,0,$ensemblDotPos);
+				}
+				echo $this->Html->link(
+					$gene_names[$indexEns],
+					'http://blueprint-data.bsc.es/#/?q=gene:' . $ensemblGeneIdTrimmed . '&w=500',
+					array(
+						'target' => '_blank'
+					)
+				);
+				echo $this->Html->tag('br');
 			}
-			echo $this->Html->link(
-				$h['_source']['gene_name'],
-				'http://blueprint-data.bsc.es/#/?q=gene:' . $ensemblGeneIdTrimmed . '&w=500',
-				array(
-					'target' => '_blank'
-				)
-			);
 		}
 		?></td>
                 <td><?php
 		if(isset($h['_source']['ensemblGeneId'])) {
-			echo $this->Html->link(
-				$h['_source']['ensemblGeneId'],
-				$ENSEMBL_BASE.'Gene/Summary?db=core&g=' . $h['_source']['ensemblGeneId'],
-				array(
-					'target' => '_blank'
-				)
-			);
+			$ensemblGeneIds = is_array($h['_source']['ensemblGeneId']) ? $h['_source']['ensemblGeneId'] : array($h['_source']['ensemblGeneId']);
+			foreach($ensemblGeneIds as $ensemblGeneId) {
+				echo $this->Html->link(
+					$ensemblGeneId,
+					$ENSEMBL_BASE.'Gene/Summary?db=core&g=' . $ensemblGeneId,
+					array(
+						'target' => '_blank'
+					)
+				);
+				echo $this->Html->tag('br');
+			}
 		}
 		?></td>
 		<!-- <td><?php if(isset($h['_source']['exonNumber'])) { echo $h['_source']['exonNumber']; }?></td> -->
