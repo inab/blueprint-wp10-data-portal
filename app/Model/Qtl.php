@@ -75,8 +75,10 @@ class Qtl extends AppModel {
 						# To be redesigned
 						case "gene":
 							$andQueries[] = array(
-								'match' => array(
-									'gene_name' => $value
+								'multi_match' => array(
+									'query' => $value,
+									'type' => 'phrase_prefix',
+									'fields' => array('gene_name','ensemblGeneId')
 								)
 							);
 							break;
