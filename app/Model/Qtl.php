@@ -236,7 +236,8 @@ class Qtl extends AppModel {
 	}
 	
 	public function setupClient($elasticsearchConfig) {
-		$this->client = new Elasticsearch\Client($elasticsearchConfig);
+		//$this->client = new Elasticsearch\Client($elasticsearchConfig);
+		$this->client = Elasticsearch\ClientBuilder::fromConfig($elasticsearchConfig);
 	}
 
 	public function search($q = null,$size = 40,$offset = null) {

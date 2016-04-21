@@ -52,7 +52,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	  </div>
 	</div>
 	<div class="ui page grid">
-	<?php echo $this->Session->flash(); ?>
+	<?php echo $this->Flash->render(); ?>
 	<?php echo $this->fetch('content'); ?>
 	</div>
 </body>
