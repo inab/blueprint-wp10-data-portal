@@ -27,9 +27,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	</title>
 	<?php
 		echo $this->Html->meta('icon');
-		echo $this->Html->script('//ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js')."\n";
-		echo $this->Html->script('../Semantic-UI/dist/semantic.min')."\n";
-		echo $this->Html->css('../Semantic-UI/dist/semantic')."\n";
+		echo $this->Html->script('../libs/jquery/jquery.min')."\n";
+		echo $this->Html->script('../libs/Semantic-UI/dist/semantic.min')."\n";
+		echo $this->Html->css('../libs/Semantic-UI/dist/semantic.min')."\n";
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
