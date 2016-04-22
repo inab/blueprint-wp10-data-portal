@@ -56,6 +56,28 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<?php echo $this->Flash->render(); ?>
 	<?php echo $this->fetch('content'); ?>
 	</div>
+	<div class="ui center aligned container footer">
+		<div class="ui three column grid">
+			<div class="column centered">
+				<a href="http://ihec-epigenomes.org/"><?php echo $this->Html->image('ihec_logo.png',array('alt' => 'IHEC','class' => 'logo'))?></a>
+			</div>
+			<div class="column centered">
+				<a href="http://www.blueprint-epigenome.eu/"><?php echo $this->Html->image('logoblueprint.png',array('alt' => 'BLUEPRINT','class' => 'logo'))?></a>
+			</div>
+			<div class="column centered">
+				<a href="http://cordis.europa.eu/project/rcn/99677_en.html" target="_blank"><?php echo $this->Html->image('5000200-commission-cl.jpg',array('class' => 'logo'))?></a>
+			</div>
+		</div>
+		<div class="ui text container">This project has received funding from the European Union’s 7<sup>th</sup> Framework Programme for research, technological development and demonstration under <a href="http://cordis.europa.eu/project/rcn/99677_en.html" target="_blank">grant agreement no 282510</a></div>
+		<div class="ui two column grid">
+			<div class="column">
+				<p>This site is hosted and has been developed at <a href="http://www.cnio.es/">CNIO</a></p>
+			</div>
+			<div class="column">
+				<p>BLUEPRINT Epigenome WP10 &copy; 2015-2016</p>
+			</div>
+		</div>
+	</div>
 </body>
 <script>
 	$(document).ready(function(){

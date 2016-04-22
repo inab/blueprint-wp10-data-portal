@@ -13,3 +13,7 @@
 	margin-right: 0.5em !important;
 	display: inherit;
 }
+
+.footer .logo {
+	height: 50px;
+}
