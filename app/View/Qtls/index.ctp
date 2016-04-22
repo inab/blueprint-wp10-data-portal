@@ -7,7 +7,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 
 <div class="sixteen wide column">
     <div class="hidden section divider"></div>
-    <h1 class="ui header">Search</h1>
+    <h1 class="ui header">WP10 QTLs Search</h1>
     <div class="ui secondary form segment">
 	<?php
 		echo $this->Form->create();

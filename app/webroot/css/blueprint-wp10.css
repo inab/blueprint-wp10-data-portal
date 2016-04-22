@@ -1,0 +1,15 @@
+@chartset "utf-8";
+
+.blueprint-logo {
+	height: 1.6em;
+	width: auto !important;
+	margin: 0px !important;
+}
+
+.blueprint-link {
+	line-height: inherit !important;
+	font-weight: normal;
+	font-size: inherit;
+	margin-right: 0.5em !important;
+	display: inherit;
+}

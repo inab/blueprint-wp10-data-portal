@@ -27,9 +27,10 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	</title>
 	<?php
 		echo $this->Html->meta('icon');
-		echo $this->Html->script('../libs/jquery/jquery.min')."\n";
-		echo $this->Html->script('../libs/Semantic-UI/dist/semantic.min')."\n";
-		echo $this->Html->css('../libs/Semantic-UI/dist/semantic.min')."\n";
+		echo $this->Html->script('/libs/jquery/jquery.min')."\n";
+		echo $this->Html->script('/libs/Semantic-UI/dist/semantic.min')."\n";
+		echo $this->Html->css('/libs/Semantic-UI/dist/semantic.min')."\n";
+		echo $this->Html->css('blueprint-wp10')."\n";
 		echo $this->fetch('meta');
 		echo $this->fetch('css');
 		echo $this->fetch('script');
@@ -37,16 +38,16 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 </head>
 <body style="overflow-x: auto;">
 	<div class="ui primary inverted menu">
-	  <div class="header item">BLUEPRINT WP10</div>
-	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"qtls","action"=>"index"))?>">Search</a>
+	  <div class="header item"><a class="blueprint-link" href="http://www.blueprint-epigenome.eu/" target="_blank"><?php echo $this->Html->image('logoblueprint.png',array('alt' => 'BLUEPRINT','class' => 'blueprint-logo'))?></a> WP10 Data Portal</div>
+	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"qtls","action"=>"index"))?>">QTLs Search</a>
 	  <div class="right menu">
 	    <div class="header item">
 	      Support
 	    </div>
-	    <a class="item">
-	      FAQ
+	    <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"pages","action"=>"faqs"))?>" target="_blank">
+	      FAQs
 	    </a>
-	    <a class="item">
+	    <a class="item" href="mailto:bp-wp10-portal@cnio.es?subject=BLUEPRINT WP10 Data Portal Support">
 	      E-mail Support
 	    </a>
 	  </div>
