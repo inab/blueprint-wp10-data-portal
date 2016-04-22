@@ -33,9 +33,9 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <div class="two fields">
             <div class="inline field">
 		<?php
-			echo $this->Form->input('fdr_cutoff',array('type' => 'number','div' => false,'min'=> '0.0', 'max' => '1.0', 'step' => 'any', 'label' => false, 'placeholder'=>'FDR cutoff (e.g. 0.01)'));
+			echo $this->Form->input('fdr_cutoff',array('type' => 'number','div' => false,'lang' => 'en','min'=> '0.0', 'max' => '1.0', 'step' => 'any', 'label' => false, 'placeholder'=>'FDR cutoff (e.g. 0.01, 1e-8)'));
 		?>
-                <div class="ui slider checkbox">
+                <div class="ui toggle checkbox">
 		<?php
 			echo $this->Form->checkbox('all_fdrs');
 			echo $this->Form->label('all_fdrs','All FDRs');
@@ -64,20 +64,25 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <div class="two fields">
             <div class="field">
 		<?php
-			echo $this->Form->reset("Reset form to search values",array('div' => false,'class'=>'ui negative button'));
-			echo $this->Form->button("Clear all fields",array('type' => 'button','div' => false,'onclick'=>'clearJQueryForm(this.form)','class'=>'ui secondary button'));
+			echo $this->Form->reset("Reset fields",array('type' => 'reset', 'div' => false,'class'=>'ui negative button'));
+			echo $this->Form->button($this->Html->tag("i","",array('class' => 'trash outline icon'))."Clear all fields",array('type' => 'button','div' => false,'onclick'=>'clearJQueryForm(this.form)','class'=>'ui secondary right labeled icon button'));
 		?>
             </div>
-            <div class="field">
+            <div class="inline field">
 		<?php
-			echo $this->Form->submit("Search",array('div' => false,'class'=>'ui primary button submit'));
+			echo $this->Form->button($this->Html->tag("i","",array('class' => 'search icon'))."Search",array('type' => 'submit', 'div' => false,'class'=>'ui primary right labeled icon button submit'));
+			echo $this->Form->input('results_per_page',array('div'=>false,'options' => $selectableResultsPerPage, 'default' => $defaultResultsPerPage,'label' => 'Results per page','style' => 'margin-left: 0.5em;'));
 		?>
             </div>
         </div>
         <?php echo $this->Form->end(); ?>
     </div>
 </div>
-<?php if(isset($res['hits'])):?>
+<?php
+	if(isset($dHandler['hits']) || isset($dHandler['_scroll_id'])):
+	//if(isset($dHandler)):
+		$res = $ctl->nextBatch($dHandler);
+?>
 <div class="sixteen wide left aligned column">
     <div>
 	<div class="ui equal width grid">
@@ -122,7 +127,10 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		<th><i class="info icon" data-position="left center"></i></th>
         </thead>
         <tbody>
-            <?php foreach ($res['hits']['hits'] as $h): ?>
+	<?php
+		while(count($res['hits']['hits']) > 0):
+			foreach ($res['hits']['hits'] as $h):
+	?>
             <tr>
                 <td><?php
 		$cellType = $h['_source']['cell_type'];
@@ -293,7 +301,11 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			</div>
 		</td>
             </tr>
-            <?php endforeach;?>
+	<?php
+			endforeach;
+			$res = $ctl->nextBatch($res);
+		endwhile;
+	?>
         </tbody>
     </table>
 	<div class="ui equal width grid">

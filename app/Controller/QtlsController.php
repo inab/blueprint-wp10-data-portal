@@ -9,13 +9,19 @@ class QtlsController extends AppController
 	private $sortKeys;
 	
 	private static $DEFAULT_SORT_CRITERIA = array('CHR' => 'asc');
-	
-	public $paginate = array(
-		'limit' => 25
+
+	private static $DEFAULT_RESULTS_PER_PAGE = '25';
+
+	private static $SELECTABLE_RESULTS_PER_PAGE = array(
+		'25' => '25',
+		'50' => '50',
+		'100' => '100',
+		'all' => 'all'
 	);
-	
+
     public function beforeFilter(){
         parent::beforeFilter();
+
 	$elasticsearchConfig = array();
 	
 	$hosts = Configure::read('elasticsearch');
@@ -45,10 +51,10 @@ class QtlsController extends AppController
 	sort($chromosomes);
         $this->chromosomes = $chromosomes;
     }
-	
+
     public function index() {
 	$params = null;
-	$this->log('Enter','debug');
+	//$this->log('Enter','debug');
 	if(isset($this->request->data['Qtl'])) {
 		$this->redirect(array('search'=> $this->request->data['Qtl'], 'page' => 1));
 	}
@@ -64,6 +70,7 @@ class QtlsController extends AppController
 	$res = array();
 	
 	if(isset($params)) {
+		$results_per_page = (isset($params['results_per_page']) && isset(self::$SELECTABLE_RESULTS_PER_PAGE[$params['results_per_page']])) ? $params['results_per_page'] : self::$DEFAULT_RESULTS_PER_PAGE;
 		/*
 		if(isset($this->request->params['named']) && count($this->request->params['named']) > 0) {
 			$params = $this->request->params['named'];
@@ -74,23 +81,41 @@ class QtlsController extends AppController
 		}
 		*/
 
-		$this->Paginator->settings = array(
+		$pagSettings = array(
 		//	'conditions' => $params,
 			'fields' => null,
 			'order' => self::$DEFAULT_SORT_CRITERIA,
-			'limit' => 25
 		);
+		if($results_per_page == 'all') {
+			$pagSettings['limit'] = PHP_INT_MAX;
+			$pagSettings['maxLimit'] = PHP_INT_MAX;
+		} else {
+			$pagSettings['limit'] = $results_per_page;
+		}
+		$this->Paginator->settings = $pagSettings;
 		
-		$res = $this->Paginator->paginate('Qtl',$params,$this->sortKeys);
+		try {
+			$res = $this->Paginator->paginate('Qtl',$params,$this->sortKeys);
+		} catch (NotFoundException $e) {
+			// In case of a page outside the limits, let's redirect to the first page
+			$this->redirect(array('search'=> $this->request->data['Qtl'], 'page' => 1));
+		}
 	}
 	
 	// Transform POST into GET
 	// Inspect all the named parameters to apply the filters
 	$filter = array();
-	$this->set('res',$res);
+	$this->set('dHandler',$res);
 	$this->set('chromosomes',$this->chromosomes);
 	$this->set('filter',$filter);
+	$this->set('selectableResultsPerPage',self::$SELECTABLE_RESULTS_PER_PAGE);
+	$this->set('defaultResultsPerPage',self::$DEFAULT_RESULTS_PER_PAGE);
+	$this->set('ctl',$this);
     }
+	
+	public function nextBatch($res) {
+		return $this->Qtl->next_scrolled_result($res);
+	}
 	
 	// Based on http://blog.ekini.net/2012/10/10/cakephp-2-x-csv-file-download-from-a-database-query/
 	public function bulkqtl($cell_type = null,$qtl_source = null,$qtl_id = null) {

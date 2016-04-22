@@ -225,7 +225,9 @@ class Qtl extends AppModel {
 		
 		//$this->log($query,'debug');
 		
-		return $this->search($q = $query,$size = $limit,$offset = ($page - 1)*$limit);
+		// Over this threshold, scrolled search
+		
+		return ($limit > 100) ? $this->scrolled_search($q = $query) : $this->search($q = $query,$size = $limit,$offset = ($page - 1)*$limit);
 	}
 	
 	public function paginateCount($conditions = null, $recursive = 0, $extra = array()) {
@@ -238,6 +240,43 @@ class Qtl extends AppModel {
 	public function setupClient($elasticsearchConfig) {
 		//$this->client = new Elasticsearch\Client($elasticsearchConfig);
 		$this->client = Elasticsearch\ClientBuilder::fromConfig($elasticsearchConfig);
+	}
+
+	private static $SCROLL_TIME = '30s';
+
+	public function scrolled_search($q = null) {
+		
+		$searchParams = array(
+			'scroll' => self::$SCROLL_TIME,
+			'index' => self::$BP_INDEX,
+			'type' => self::$BP_TYPE,
+			'size' => 100
+		);
+		
+		if(! empty($q)) {
+			$searchParams['body'] = $q;
+		}
+		
+		$res = $this->client->search($searchParams);
+		return $res;
+	}
+
+	public function next_scrolled_result($doc) {
+		if(isset($doc['_scroll_id'])) {
+			return $this->client->scroll(array(
+				'scroll_id' => $doc['_scroll_id'],
+				'scroll' => self::$SCROLL_TIME
+			));
+		} else if(isset($doc['unsetOnNext'])) {
+			return array(
+				'hits' => array(
+					'hits' => array()
+				)
+			);
+		} else {
+			$doc['unsetOnNext'] = true;
+			return $doc;
+		}
 	}
 
 	public function search($q = null,$size = 40,$offset = null) {
