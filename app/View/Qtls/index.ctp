@@ -99,6 +99,25 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		<?php
 			echo $this->Paginator->counter('{:count} results, showing from {:start} to {:end}');
 		?>
+			<br/>
+			<?php
+				echo $this->Html->link(
+					$this->Html->tag('i','',array('class' => 'download icon')).'download all as TSV',
+					array(
+						'controller' => 'qtls',
+						'action' => 'download',
+						'full_base' => true,
+						// Now, the parameters for the link
+						'search' => $this->passedArgs['search']
+					),
+					array(
+						'target' => '_blank',
+						'style' => 'font-size:0.75em;',
+						'confirm' => 'Are you sure you wish to download these results?',
+						'escape' => false
+					)
+				);
+			?>
 		</div>
 		<div class="right aligned column">
 		<?php

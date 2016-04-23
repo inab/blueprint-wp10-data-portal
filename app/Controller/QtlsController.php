@@ -116,7 +116,90 @@ class QtlsController extends AppController
 	public function nextBatch($res) {
 		return $this->Qtl->next_scrolled_result($res);
 	}
-	
+
+	public function download() {
+		$params = null;
+		//$this->log('Enter','debug');
+		if(isset($this->request->data['Qtl'])) {
+			$this->redirect(array('search'=> $this->request->data['Qtl'], 'page' => 1));
+		}
+		if(empty($this->passedArgs['search']) && isset($this->request->data['Qtl'])) {
+			$params = $this->request->data['Qtl'];
+			unset($this->passedArgs['page']);
+			$this->passedArgs['search'] = $params;
+		}
+		if(empty($this->request->data) && isset($this->passedArgs['search'])) {
+			$params = $this->passedArgs['search'];
+			$this->request->data['Qtl'] = $params;
+		}
+		$res = array();
+		
+		if(isset($params)) {
+			// Let's fetch all the data, by pagination
+			$dHandler = $this->Qtl->paginate($params,null,null,PHP_INT_MAX);
+			if(isset($dHandler['hits']) || isset($dHandler['_scroll_id'])) {
+				$res = $this->nextBatch($dHandler);
+				if($res['hits']['total'] == 0) {
+					throw new NotFoundException(__('QTL query not found'));
+				}
+
+				$csv_file = fopen('php://output', 'w');
+				$filename = "blueprint_wp10_query_result.tsv";
+				header('Content-type: text/tab-separated-values');
+				header('Content-Disposition: attachment; filename="'.$filename.'"');
+
+				$header_row = array('# '.'cell_type','qtl_source','qtl_id','chromosome','chromosome_start','chromosome_end','rsid','pos','p-bonferroni','q-value(FDR)','overlapped gene(s)','overlapped EnsEMBL Gene Id(s)','overlapped EnsEMBL Transcript Id(s)','exon_number','methylation_probe_id','histone','splice junctions','F','metrics');
+				fputs($csv_file,implode("\t",$header_row)."\n");
+				
+				$touchdown = 0;
+				while(count($res['hits']['hits']) > 0) {
+					foreach ($res['hits']['hits'] as $hit) {
+						$h = $hit['_source'];
+						$qtl_line = implode("\t",array(
+							$h['cell_type'],
+							$h['qtl_source'],
+							$h['gene_id'],
+							$h['gene_chrom'],
+							$h['gene_start'],
+							$h['gene_end'],
+							$h['snp_id'],
+							isset($h['pos']) ? $h['pos'] : '',
+							$h['pv'],
+							$h['qv'],
+							isset($h['gene_name']) ? (is_array($h['gene_name']) ? implode(",",$h['gene_name']) : $h['gene_name']) : '',
+							isset($h['ensemblGeneId']) ? (is_array($h['ensemblGeneId']) ? implode(",",$h['ensemblGeneId']) : $h['ensemblGeneId']) : '',
+							isset($h['ensemblTranscriptId']) ? (is_array($h['ensemblTranscriptId']) ? implode(",",$h['ensemblTranscriptId']) : $h['ensemblTranscriptId']) : '',
+							isset($h['exonNumber']) ? $h['exonNumber'] : '',
+							isset($h['probeId']) ? $h['probeId'] : '',
+							isset($h['histone']) ? $h['histone'] : '',
+							isset($h['splice']) ? (is_array($h['splice']) ? implode(",",$h['splice']) : $h['splice']) : '',
+							isset($h['F']) ? isset($h['F']) : '',
+							json_encode($h['metrics'])
+						));
+
+						fputs($csv_file,$qtl_line."\n");
+
+						$touchdown++;
+						if($touchdown>=10) {
+							set_time_limit(30);
+						}
+					}
+					$res = $this->nextBatch($res);
+				}
+
+				fclose($csv_file);
+
+				$this->layout = false;
+				$this->render(false);
+				return false;
+			} else {
+				throw new NotFoundException(__('QTL query not found'));
+			}
+		} else {
+			throw new NotFoundException(__('QTL query not found'));
+		}
+	}
+
 	// Based on http://blog.ekini.net/2012/10/10/cakephp-2-x-csv-file-download-from-a-database-query/
 	public function bulkqtl($cell_type = null,$qtl_source = null,$qtl_id = null) {
 		$qtl_id = strtr($qtl_id,'_',':');
