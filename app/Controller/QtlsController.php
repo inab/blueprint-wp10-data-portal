@@ -144,7 +144,8 @@ class QtlsController extends AppController
 				}
 
 				$csv_file = fopen('php://output', 'w');
-				$filename = "blueprint_wp10_query_result.tsv";
+				$datetime = new DateTime();
+				$filename = "blueprint_wp10_query_result_".$datetime->format('c').".tsv";
 				header('Content-type: text/tab-separated-values');
 				header('Content-Disposition: attachment; filename="'.$filename.'"');
 
