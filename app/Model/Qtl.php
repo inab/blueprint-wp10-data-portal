@@ -109,6 +109,13 @@ class Qtl extends AppModel {
 								)
 							);
 							break;
+						case "cell_type":
+							$andFilters[] = array(
+								'terms' => array(
+									'cell_type' => $value
+								)
+							);
+							break;
 						default:
 							if(!in_array($param_name, array('page','sort','direction','limit'))){
 								// You may use a switch here to make special filters

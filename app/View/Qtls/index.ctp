@@ -60,6 +60,18 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			echo $this->Form->select('qtl_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
 		?>
             </div>
+            <div class="inline field">
+		Restrict cellular types
+		<?php
+			$anyCellType = 'any cellular type';
+			$cellTypeAttrs = array(
+				'tcel' => 'T-Cell',
+				'mono' => 'Monocyte',
+				'neut' => 'Neutrophyl',
+			);
+			echo $this->Form->select('cell_type',$cellTypeAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyCellType, 'label' => false, 'multiple' => true));
+		?>
+            </div>
         </div>
         <div class="two fields">
             <div class="field">
