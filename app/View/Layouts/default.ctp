@@ -71,7 +71,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		<div class="ui text container">This project has received funding from the European Union’s 7<sup>th</sup> Framework Programme for research, technological development and demonstration under <a href="http://cordis.europa.eu/project/rcn/99677_en.html" target="_blank">grant agreement no 282510</a></div>
 		<div class="ui two column grid">
 			<div class="column">
-				<p>This site is hosted and has been developed at <a href="http://www.cnio.es/">CNIO</a></p>
+				<p>This site has been developed and is hosted at <a href="http://www.cnio.es/">CNIO</a></p>
 			</div>
 			<div class="column">
 				<p>BLUEPRINT Epigenome WP10 &copy; 2015-2016</p>

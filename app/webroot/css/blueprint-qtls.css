@@ -59,3 +59,19 @@ label.normal-style {
 	font-weight: normal !important;
 	font-style: normal !important;
 }
+
+span.small-pos {
+	font-size: 0.5em;
+}
+
+.item.nowrap {
+	white-space: nowrap;
+}
+
+.itemlogo {
+	height: 58px;
+}
+
+input[type='number'] {
+    -moz-appearance:textfield;
+}

@@ -1,5 +1,31 @@
 <?php
 $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
+$BDAP_cell_types = array(
+	'CL:0000096',	// mature neutrophil
+	'CL:0000560',	// band form neutrophil
+	'CL:0011114',	// segmented neutrophil of bone marrow
+
+	'CL:0000576',	// monocyte
+	'CL:0000860',	// classical monocyte
+	'CL:0002057',	// CD14-positive, CD16-negative classical monocyte
+
+	'CL:0002419',	// mature T cell
+	'CL:0000815',	// regulatory T cell
+);
+$BDAP_visible_charts = array(
+	'methyl',
+	'exp_g',
+	'exp_t',
+	'dnase',
+	'cseq_broad H3K4me1',
+	'cseq_narrow H3K4me1',
+	'cseq_broad H3K27ac',
+	'cseq_narrow H3K27ac'
+);
+
+$BDAP_normal = 'PATO:0000461';
+
+
 $this->Html->css('blueprint-qtls',array('inline' => false));
 $this->Html->script('blueprint-qtls',array('inline' => false));
 $this->Paginator->options(array('url' => $this->passedArgs));
@@ -13,19 +39,39 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		echo $this->Form->create();
 	?>
         <div class="three fields">
+		<div class="field">
 		<?php
 			$attrs = array('any' => 'Any chromosome');
 			foreach ($chromosomes as $chro) {
 				$attrs[$chro] = 'Chromosome '.$chro;
 			}
-			echo $this->Form->input('chromosome',array('div' => 'field','empty' => $attrs['any'], 'options' => $attrs, 'label' => false, 'class' => 'ui search dropdown', 'default' => 'any'));
-			echo $this->Form->input('chromosome_start',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => '\d+', 'placeholder'=>'Start'));
-			echo $this->Form->input('chromosome_end',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => '\d+', 'placeholder'=>'End'));
+			echo $this->Form->label('chromosome','Chromosome',array('class' => 'normal-style'));
+			echo $this->Form->input('chromosome',array('div' => false,'empty' => $attrs['any'], 'options' => $attrs, 'label' => false, 'class' => 'ui search dropdown', 'default' => 'any'));
 		?>
+                	<div class="ui checkbox">
+			<?php
+				echo $this->Form->label('coordinates_match_snps','Match SNPs positions');
+				echo $this->Form->checkbox('coordinates_match_snps',array('hiddenField' => false));
+			?>
+			</div>
+		</div>
+		<div class="field">
+		<?php
+			echo $this->Form->label('chromosome_start','Chromosome start',array('class' => 'normal-style'));
+			echo $this->Form->input('chromosome_start',array('type' => 'text', 'div' => false,'label' => false, 'pattern' => '\d+', 'placeholder'=>'Start'));
+		?>
+		</div>
+		<div class="field">
+		<?php
+			echo $this->Form->label('chromosome_end','Chromosome end',array('class' => 'normal-style'));
+			echo $this->Form->input('chromosome_end',array('type' => 'text', 'div' => false,'label' => false, 'pattern' => '\d+', 'placeholder'=>'End'));
+		?>
+		</div>
         </div>
         <div class="three fields">
 		<div class="field">
 		<?php
+			echo $this->Form->label('gene','Gene Name or Id search',array('class' => 'normal-style'));
 			echo $this->Form->input('gene',array('type' => 'text', 'div' => false,'label' => false, 'placeholder'=>'Gene name or Ensembl Gene Id'));
 		?>
                 	<div class="ui checkbox">
@@ -35,10 +81,18 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			?>
 			</div>
 		</div>
+		<div class="field">
 		<?php
-			echo $this->Form->input('SNP',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => 'rs.+', 'placeholder'=>'SNP'));
-			echo $this->Form->input('array_probe',array('type' => 'text', 'div' => 'field','label' => false, 'placeholder'=>'Meth probe'));
+			echo $this->Form->label('SNP','dbSNP rsid search',array('class' => 'normal-style'));
+			echo $this->Form->input('SNP',array('type' => 'text', 'div' => false,'label' => false, 'pattern' => 'rs.+', 'placeholder'=>'SNP'));
 		?>
+		</div>
+		<div class="field">
+		<?php
+			echo $this->Form->label('array_probe','Methylation probe id',array('class' => 'normal-style'));
+			echo $this->Form->input('array_probe',array('type' => 'text', 'div' => false,'label' => false, 'placeholder'=>'Meth probe'));
+		?>
+		</div>
         </div>
         <div class="three fields">
             <div class="inline field">
@@ -57,6 +111,18 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             </div>
             <div class="inline field">
 		<?php
+			$anyCellType = 'any cellular type';
+			$cellTypeAttrs = array(
+				'tcel' => 'T-Cell',
+				'mono' => 'Monocyte',
+				'neut' => 'Neutrophil',
+			);
+			echo $this->Form->label('cell_type','Restrict cellular types',array('class' => 'normal-style'));
+			echo $this->Form->select('cell_type',$cellTypeAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyCellType, 'label' => false, 'multiple' => true));
+		?>
+            </div>
+            <div class="inline field">
+		<?php
 			$anyTrait = 'any QTL identification source';
 			$traitAttrs = array(
 				'gene' => 'gene',
@@ -71,18 +137,6 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			);
 			echo $this->Form->label('qtl_source','Show traits from',array('class' => 'normal-style'));
 			echo $this->Form->select('qtl_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
-		?>
-            </div>
-            <div class="inline field">
-		<?php
-			$anyCellType = 'any cellular type';
-			$cellTypeAttrs = array(
-				'tcel' => 'T-Cell',
-				'mono' => 'Monocyte',
-				'neut' => 'Neutrophyl',
-			);
-			echo $this->Form->label('cell_type','Restrict cellular types',array('class' => 'normal-style'));
-			echo $this->Form->select('cell_type',$cellTypeAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyCellType, 'label' => false, 'multiple' => true));
 		?>
             </div>
         </div>
@@ -165,14 +219,12 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <thead>
             <th>Cell Type</th>
             <th>Qtl Source</th>
-            <th><?php echo $this->Paginator->sort('CHR','Coordinates'); ?></th>
-            <th><?php echo $this->Paginator->sort('SNP','SNP'); ?></th>
-            <!-- <th><?php echo $this->Paginator->sort('Pos','pos'); ?></th> -->
-            <th><?php echo $this->Paginator->sort('pv','P-value'); ?></th>
-            <th><?php echo $this->Paginator->sort('qv','Q-value'); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('CHR','Coordinates'); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('SNP_pos','SNP'); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('pv','P-value'); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('qv','Q-value'); ?></th>
             <!-- <th>Qtl Id</th> -->
-            <th><?php echo $this->Paginator->sort('gene','Gene'); ?></th>
-            <th><?php echo $this->Paginator->sort('ensembl_gene_id','Ensembl Gene Id'); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('gene','Gene'); ?></th>
             <!-- <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th> -->
             <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Ensembl Transcript Id'); ?></th>
 		<!--
@@ -205,8 +257,8 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			)
 		);
 		?></td>
-                <td><?php
-		if(isset($h['_source']['snp_id'])) {	
+                <td class="center aligned"><?php
+		if(isset($h['_source']['snp_id'])) {
 			echo $this->Html->link(
 				$h['_source']['snp_id'],
 				'http://www.ncbi.nlm.nih.gov/SNP/snp_ref.cgi?searchType=adhoc_search&type=rs&rs=' . $h['_source']['snp_id'],
@@ -214,9 +266,12 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 					'target' => '_blank'
 				)
 			);
+			if(isset($h['_source']['pos'])) {
+				echo $this->Html->tag('br');
+				echo $this->Html->tag('span','('.$h['_source']['pos'].')',array('class' => 'small-pos'));
+			}
 		}
 		?></td>
-                <!-- <td><?php if(isset($h['_source']['pos'])) { echo sprintf("%u",$h['_source']['pos']); }?></td> -->
                 <td><?php if(isset($h['_source']['pv'])) { echo sprintf("%.4G",$h['_source']['pv']); }?></td>
                 <td><?php if(isset($h['_source']['qv'])) { echo sprintf("%.4G",$h['_source']['qv']); }?></td>
                 <!-- <td><?php
@@ -224,41 +279,79 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		echo $this->Html->tag('span',$qtlId);
 		?></td> -->
                 <td><?php
-		if(isset($h['_source']['gene_name'])) {
+		if(isset($h['_source']['gene_name'])):
 			$gene_names = is_array($h['_source']['gene_name']) ? $h['_source']['gene_name'] : array($h['_source']['gene_name']);
 			$ensemblGeneIds = is_array($h['_source']['ensemblGeneId']) ? $h['_source']['ensemblGeneId'] : array($h['_source']['ensemblGeneId']);
 			
-			foreach($ensemblGeneIds as $indexEns => $ensemblGeneId) {
+			foreach($ensemblGeneIds as $indexEns => $ensemblGeneId):
 				$ensemblGeneIdTrimmed = $ensemblGeneId;
 				$ensemblDotPos = strrpos($ensemblGeneIdTrimmed,'.');
 				if($ensemblDotPos) {
 					$ensemblGeneIdTrimmed = substr($ensemblGeneIdTrimmed,0,$ensemblDotPos);
 				}
+				/*
 				echo $this->Html->link(
 					$gene_names[$indexEns],
 					'http://blueprint-data.bsc.es/#/?q=gene:' . $ensemblGeneIdTrimmed . '&w=500',
 					array(
-						'target' => '_blank'
+						'target' => '_blank',
+						'data-position' => 'top',
+						'class' => 'info circle icon'
 					)
 				);
-				echo $this->Html->tag('br');
-			}
-		}
-		?></td>
-                <td><?php
-		if(isset($h['_source']['ensemblGeneId'])) {
-			$ensemblGeneIds = is_array($h['_source']['ensemblGeneId']) ? $h['_source']['ensemblGeneId'] : array($h['_source']['ensemblGeneId']);
-			foreach($ensemblGeneIds as $ensemblGeneId) {
-				echo $this->Html->link(
-					$ensemblGeneId,
-					$ENSEMBL_BASE.'Gene/Summary?db=core&g=' . $ensemblGeneId,
+				*/
+				echo $this->Html->tag(
+					'span',
+					$gene_names[$indexEns],
 					array(
-						'target' => '_blank'
+						'data-position' => 'top center',
+						'class' => 'plus-info noselect info circle icon'
 					)
 				);
+		?>
+			<div class="ui popup">
+				<div class="ui list">
+			<?php
+			echo $this->Html->div('item center aligned',$this->Html->div('ui blue horizontal large label','Gene: '.$gene_names[$indexEns]));
+			echo $this->Html->div('item nowrap',$this->Html->div('ui horizontal label','Ensembl Gene Id').$this->Html->tag('span',$ensemblGeneId));
+			?>
+				</div>
+				<div class="ui horizontal list">
+					<div class="item">
+						<a href="<?php echo 'http://www.genecards.org/cgi-bin/carddisp.pl'.'?'. http_build_query(array('gene' => $ensemblGeneIdTrimmed)); ?>" target="_blank"><?php echo $this->Html->image('GeneCards.png',array('alt' => 'GeneCards','title' => 'Search this gene on GeneCards','class' => 'itemlogo'))?></a>
+					</div>
+					<div class="item">
+						<a href="<?php echo $ENSEMBL_BASE.'Gene/Summary'.'?'. http_build_query(array('db' => 'core','gene' => $ensemblGeneIdTrimmed)); ?>" target="_blank"><?php echo $this->Html->image('EnsEMBL.png',array('alt' => 'EnsEMBL','title' => 'Search this gene on EnsEMBL','class' => 'itemlogo'))?></a>
+					</div>
+					<?php
+						$bdap_query = http_build_query(
+							array(
+								'q' => 'gene:'.$ensemblGeneIdTrimmed,
+								'selectedTab' => $ensemblGeneIdTrimmed,
+								'tabs' => array(
+									array(
+										'id' => $ensemblGeneIdTrimmed,
+										'visibleTerms' => $BDAP_cell_types,
+										'selectedView' => 'General',
+										'initiallyShowMeanSeries' => 'false',
+										'visibleCharts' => $BDAP_visible_charts,
+										'treeDisplay' => 'compact',
+										'filteredDisease' => $BDAP_normal
+									)
+								)
+							)
+
+						);
+					?>
+					<div class="item">
+						<a href="<?php echo 'http://blueprint-data.bsc.es/#!/'.'?'. $bdap_query; ?>" target="_blank"><?php echo $this->Html->image('BDAP-logo.png',array('alt' => 'BLUEPRINT Data Analysis Portal','title' => 'Search this gene on BLUEPRINT Data Analysis Portal','class' => 'itemlogo'))?></a>
+					</div>
+				</div>
+			</div>
+		<?php
 				echo $this->Html->tag('br');
-			}
-		}
+			endforeach;
+		endif;
 		?></td>
 		<!-- <td><?php if(isset($h['_source']['exonNumber'])) { echo $h['_source']['exonNumber']; }?></td> -->
                 <td><?php
@@ -299,7 +392,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			<div class="ui flowing popup">
 				<div class="ui list">
 			<?php
-			echo $this->Html->div('item',$this->Html->div('ui blue horizontal large label','Additional data'));
+			echo $this->Html->div('item center aligned',$this->Html->div('ui blue horizontal large label','Additional data'));
 			$qtlId = $h['_source']['gene_id'];
 			echo $this->Html->div('item',$this->Html->div('ui horizontal label','Trait Id').$this->Html->tag('span',$qtlId));
 			if(isset($h['_source']['pos'])) { echo $this->Html->div('item',$this->Html->div('ui horizonal label','SNP pos').$this->Html->tag('span',sprintf("%u",$h['_source']['pos']))); }

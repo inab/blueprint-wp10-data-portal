@@ -55,18 +55,20 @@ class Qtl extends AppModel {
 							}
 							break;
 						case "chromosome_start":
+							$cStartFacetName = (isset($conditions['coordinates_match_snps']) && $conditions['coordinates_match_snps'] > 0) ? 'pos' : 'gene_start';
 							$andFilters[] = array(
 								'range' => array(
-									'gene_start' => array(
+									$cStartFacetName => array(
 										'gte' => $value
 									)
 								)
 							);
 							break;
 						case "chromosome_end":
+							$cEndFacetName = (isset($conditions['coordinates_match_snps']) && $conditions['coordinates_match_snps'] > 0) ? 'pos' : 'gene_end';
 							$andFilters[] = array(
 								'range' => array(
-									'gene_end' => array(
+									$cEndFacetName => array(
 										'lte' => $value
 									)
 								)
