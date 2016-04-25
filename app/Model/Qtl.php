@@ -74,12 +74,17 @@ class Qtl extends AppModel {
 							break;
 						# To be redesigned
 						case "gene":
+							$geneMultiMatch = array(
+								'query' => $value,
+								'type' => 'phrase_prefix',
+								'fields' => array('gene_name','ensemblGeneId')
+							);
+							if(isset($conditions['fuzzy_gene_search']) && $conditions['fuzzy_gene_search'] > 0) {
+								$geneMultiMatch['fuzziness'] = 'AUTO';
+							}
+
 							$andQueries[] = array(
-								'multi_match' => array(
-									'query' => $value,
-									'type' => 'phrase_prefix',
-									'fields' => array('gene_name','ensemblGeneId')
-								)
+								'multi_match' => $geneMultiMatch
 							);
 							break;
 						case "SNP":

@@ -54,3 +54,8 @@ th a.desc:after {
 	-moz-user-select: none;      /* Firefox */
 	-ms-user-select: none;       /* Internet Explorer/Edge */
 }
+
+label.normal-style {
+	font-weight: normal !important;
+	font-style: normal !important;
+}

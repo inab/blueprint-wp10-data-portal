@@ -24,26 +24,38 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		?>
         </div>
         <div class="three fields">
+		<div class="field">
 		<?php
-			echo $this->Form->input('gene',array('type' => 'text', 'div' => 'field','label' => false, 'placeholder'=>'Gene'));
+			echo $this->Form->input('gene',array('type' => 'text', 'div' => false,'label' => false, 'placeholder'=>'Gene name or Ensembl Gene Id'));
+		?>
+                	<div class="ui checkbox">
+			<?php
+				echo $this->Form->label('fuzzy_gene_search','Do fuzzy gene name searches');
+				echo $this->Form->checkbox('fuzzy_gene_search',array('hiddenField' => false));
+			?>
+			</div>
+		</div>
+		<?php
 			echo $this->Form->input('SNP',array('type' => 'text', 'div' => 'field','label' => false, 'pattern' => 'rs.+', 'placeholder'=>'SNP'));
 			echo $this->Form->input('array_probe',array('type' => 'text', 'div' => 'field','label' => false, 'placeholder'=>'Meth probe'));
 		?>
         </div>
-        <div class="two fields">
+        <div class="three fields">
             <div class="inline field">
+	    	<div>
 		<?php
+			echo $this->Form->label('fdr_cutoff','Cut-off on FDR values',array('class' => 'normal-style'));
 			echo $this->Form->input('fdr_cutoff',array('type' => 'number','div' => false,'lang' => 'en','min'=> '0.0', 'max' => '1.0', 'step' => 'any', 'label' => false, 'placeholder'=>'FDR cutoff (e.g. 0.01, 1e-8)'));
 		?>
-                <div class="ui toggle checkbox">
+		</div>
+		<div class="ui toggle checkbox">
 		<?php
 			echo $this->Form->checkbox('all_fdrs');
 			echo $this->Form->label('all_fdrs','All FDRs');
 		?>
-                </div>
+		</div>
             </div>
             <div class="inline field">
-		Show traits from 
 		<?php
 			$anyTrait = 'any QTL identification source';
 			$traitAttrs = array(
@@ -57,11 +69,11 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 				'K4ME1'=> 'H3K4ME1 ChIP-Seq peaks',
 				'sqtls' => 'sQTLseekeR'
 			);
+			echo $this->Form->label('qtl_source','Show traits from',array('class' => 'normal-style'));
 			echo $this->Form->select('qtl_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
 		?>
             </div>
             <div class="inline field">
-		Restrict cellular types
 		<?php
 			$anyCellType = 'any cellular type';
 			$cellTypeAttrs = array(
@@ -69,11 +81,12 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 				'mono' => 'Monocyte',
 				'neut' => 'Neutrophyl',
 			);
+			echo $this->Form->label('cell_type','Restrict cellular types',array('class' => 'normal-style'));
 			echo $this->Form->select('cell_type',$cellTypeAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyCellType, 'label' => false, 'multiple' => true));
 		?>
             </div>
         </div>
-        <div class="two fields">
+        <div class="three fields">
             <div class="field">
 		<?php
 			echo $this->Form->reset("Reset fields",array('type' => 'reset', 'div' => false,'class'=>'ui negative button'));
@@ -82,10 +95,15 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             </div>
             <div class="inline field">
 		<?php
-			echo $this->Form->button($this->Html->tag("i","",array('class' => 'search icon'))."Search",array('type' => 'submit', 'div' => false,'class'=>'ui primary right labeled icon button submit'));
-			echo $this->Form->input('results_per_page',array('div'=>false,'options' => $selectableResultsPerPage, 'default' => $defaultResultsPerPage,'label' => 'Results per page','style' => 'margin-left: 0.5em;'));
+			echo $this->Form->input('results_per_page',array('div'=>false,'options' => $selectableResultsPerPage, 'default' => $defaultResultsPerPage,'label' => false,'style' => 'margin-right: 0.5em;'));
+			echo $this->Form->label('results_per_page','Results per page');
 		?>
             </div>
+	    <div class="field ui right aligned container">
+		<?php
+			echo $this->Form->button($this->Html->tag("i","",array('class' => 'search icon'))."Search",array('type' => 'submit', 'div' => false,'class'=>'ui primary right labeled icon button submit'));
+		?>
+	    </div>
         </div>
         <?php echo $this->Form->end(); ?>
     </div>
