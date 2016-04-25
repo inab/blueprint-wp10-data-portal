@@ -143,7 +143,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <th><?php echo $this->Paginator->sort('histone','Histone'); ?></th>
 		-->
 		<th><?php echo $this->Paginator->sort('array_probe','Meth probe'); ?></th>
-		<th><i class="info icon" data-position="left center"></i></th>
+		<th class="center aligned"><i class="info circle icon" data-position="left center"></i></th>
         </thead>
         <tbody>
 	<?php
@@ -255,7 +255,11 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		}
 		?></td>
 		<td>
+			<!--
 			<i class="link info circle blue icon" data-position="left center"></i>
+			<span class="link info plus-info icon" data-position="left center">+&nbsp;info</span>
+			-->
+			<span class="plus-info noselect info circle icon" data-position="left center">+&nbsp;info</span>
 			<div class="ui flowing popup">
 				<div class="ui list">
 			<?php

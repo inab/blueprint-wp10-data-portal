@@ -32,3 +32,25 @@ th a.asc:after {
 th a.desc:after {
 	content: ' ⇡';
 }
+
+.plus-info {
+	border-radius: 10px;
+	-moz-border-radius: 10px;
+	-webkit-border-radius: 10px;
+	-ms-border-radius: 10px;
+	background-color: #458AC6;
+	color: white;
+	padding-left: 5px;
+	padding-right: 5px;
+	cursor: pointer;
+}
+
+.noselect {
+	user-select: none;           /* Non-prefixed version, currently
+					not supported by any browser */
+	-webkit-touch-callout: none; /* iOS Safari */
+	-webkit-user-select: none;   /* Chrome/Safari/Opera */
+	-khtml-user-select: none;    /* Konqueror */
+	-moz-user-select: none;      /* Firefox */
+	-ms-user-select: none;       /* Internet Explorer/Edge */
+}
