@@ -98,6 +98,9 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		<div class="center aligned column">
 		<?php
 			echo $this->Paginator->counter('{:count} results, showing from {:start} to {:end}');
+			$paginatorInformation = $this->Paginator->params();
+			$totalCount = $paginatorInformation['count'];
+			if($totalCount > 0):
 		?>
 			<br/>
 			<?php
@@ -118,6 +121,9 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 					)
 				);
 			?>
+		<?php
+			endif
+		?>
 		</div>
 		<div class="right aligned column">
 		<?php
