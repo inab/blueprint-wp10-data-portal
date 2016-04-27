@@ -16,6 +16,8 @@ class Qtl extends AppModel {
 		'qtl_source' => array('qtl_source'),
 		'id' => array('gene_id'),
 		'SNP' => array('snp_id'),
+		'MAF' => array('MAF'),
+		'beta' => array('metrics' => 'beta'),
 		'CHR' => array('gene_chrom','gene_start','gene_end'),
 		'SNP_pos' => array('gene_chrom','pos'),
 		'gene' => array('gene_name'),
@@ -91,8 +93,19 @@ class Qtl extends AppModel {
 							break;
 						case "SNP":
 							$andFilters[] = array(
-								'term' => array(
-									'snp_id' => $value
+								'bool' => array(
+									'should' => array(
+										array(
+											'term' => array(
+												'rsId' => $value
+											)
+										),
+										array(
+											'term' => array(
+												'snp_id' => $value
+											)
+										)
+									)
 								)
 							);
 							break;
@@ -198,9 +211,14 @@ class Qtl extends AppModel {
 		if(! empty($order)) {
 			foreach($order as $orderKey => $orderCriteria) {
 				if(array_key_exists($orderKey,self::$SORT_CRITERIA)) {
-					foreach(self::$SORT_CRITERIA[$orderKey] as $attr) {
+					foreach(self::$SORT_CRITERIA[$orderKey] as $key => $attr) {
+						if(is_string($key)) {
+							$sortKey = $key . '.' . $attr;
+						} else {
+							$sortKey = $attr;
+						}
 						$sortCriteria[] = array(
-							$attr => array(
+							$sortKey => array(
 								'order' => $orderCriteria
 							)
 						);
@@ -281,15 +299,12 @@ class Qtl extends AppModel {
 				'scroll_id' => $doc['_scroll_id'],
 				'scroll' => self::$SCROLL_TIME
 			));
-		} else if(isset($doc['unsetOnNext'])) {
+		} else {
 			return array(
 				'hits' => array(
 					'hits' => array()
 				)
 			);
-		} else {
-			$doc['unsetOnNext'] = true;
-			return $doc;
 		}
 	}
 

@@ -138,7 +138,7 @@ class QtlsController extends AppController
 			// Let's fetch all the data, by pagination
 			$dHandler = $this->Qtl->paginate($params,null,null,PHP_INT_MAX);
 			if(isset($dHandler['hits']) || isset($dHandler['_scroll_id'])) {
-				$res = $this->nextBatch($dHandler);
+				$res = $dHandler;
 				if($res['hits']['total'] == 0) {
 					throw new NotFoundException(__('QTL query not found'));
 				}
@@ -149,13 +149,30 @@ class QtlsController extends AppController
 				header('Content-type: text/tab-separated-values');
 				header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-				$header_row = array('# '.'cell_type','qtl_source','qtl_id','chromosome','chromosome_start','chromosome_end','rsid','pos','p-bonferroni','q-value(FDR)','overlapped gene(s)','overlapped EnsEMBL Gene Id(s)','overlapped EnsEMBL Transcript Id(s)','exon_number','methylation_probe_id','histone','splice junctions','F','metrics');
+				$header_row = array('# '.'cell_type','qtl_source','qtl_id','chromosome','chromosome_start','chromosome_end','snp_id','pos','rs_id(s)','REF(s)','ALT(s)','MAF(s)','p-bonferroni','q-value(FDR)','overlapped gene(s)','overlapped EnsEMBL Gene Id(s)','overlapped EnsEMBL Transcript Id(s)','exon_number','methylation_probe_id','histone','splice junctions','F','metrics');
 				fputs($csv_file,implode("\t",$header_row)."\n");
 				
 				$touchdown = 0;
 				while(count($res['hits']['hits']) > 0) {
 					foreach ($res['hits']['hits'] as $hit) {
 						$h = $hit['_source'];
+						if(isset($h['rsId'])) {
+							$rsIds = implode(";",$h['rsId']);
+							if(isset($h['dbSnpRef'])) {
+								$REFs = implode(";",$h['dbSnpRef']);
+								$ALTs = implode(";",$h['dbSnpAlt']);
+								$MAFs = implode(";",$h['MAF']);
+							} else {
+								$REFs = '';
+								$ALTs = '';
+								$MAFs = '';
+							}
+						} else {
+							$rsIds = substr($h['rsId'],0,2) == 'rs' ? $h['rsId'] : '';
+							$REFs = '';
+							$ALTs = '';
+							$MAFs = '';
+						}
 						$qtl_line = implode("\t",array(
 							$h['cell_type'],
 							$h['qtl_source'],
@@ -165,15 +182,19 @@ class QtlsController extends AppController
 							$h['gene_end'],
 							$h['snp_id'],
 							isset($h['pos']) ? $h['pos'] : '',
+							$rsIds,
+							$REFs,
+							$ALTs,
+							$MAFs,
 							$h['pv'],
 							$h['qv'],
-							isset($h['gene_name']) ? (is_array($h['gene_name']) ? implode(",",$h['gene_name']) : $h['gene_name']) : '',
-							isset($h['ensemblGeneId']) ? (is_array($h['ensemblGeneId']) ? implode(",",$h['ensemblGeneId']) : $h['ensemblGeneId']) : '',
-							isset($h['ensemblTranscriptId']) ? (is_array($h['ensemblTranscriptId']) ? implode(",",$h['ensemblTranscriptId']) : $h['ensemblTranscriptId']) : '',
+							isset($h['gene_name']) ? (is_array($h['gene_name']) ? implode(";",$h['gene_name']) : $h['gene_name']) : '',
+							isset($h['ensemblGeneId']) ? (is_array($h['ensemblGeneId']) ? implode(";",$h['ensemblGeneId']) : $h['ensemblGeneId']) : '',
+							isset($h['ensemblTranscriptId']) ? (is_array($h['ensemblTranscriptId']) ? implode(";",$h['ensemblTranscriptId']) : $h['ensemblTranscriptId']) : '',
 							isset($h['exonNumber']) ? $h['exonNumber'] : '',
 							isset($h['probeId']) ? $h['probeId'] : '',
 							isset($h['histone']) ? $h['histone'] : '',
-							isset($h['splice']) ? (is_array($h['splice']) ? implode(",",$h['splice']) : $h['splice']) : '',
+							isset($h['splice']) ? (is_array($h['splice']) ? implode(";",$h['splice']) : $h['splice']) : '',
 							isset($h['F']) ? isset($h['F']) : '',
 							json_encode($h['metrics'])
 						));
