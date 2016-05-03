@@ -31,7 +31,7 @@ class Qtl extends AppModel {
 		'F' => array('F')
 	);
 	
-	private $client;
+	protected $client;
 	
 	public function SortKeys() {
 		return array_keys(self::$SORT_CRITERIA);
@@ -293,7 +293,7 @@ class Qtl extends AppModel {
 		return $res;
 	}
 
-	public function next_scrolled_result($doc) {
+	public function next_scrolled_result(&$doc) {
 		if(isset($doc['_scroll_id'])) {
 			return $this->client->scroll(array(
 				'scroll_id' => $doc['_scroll_id'],

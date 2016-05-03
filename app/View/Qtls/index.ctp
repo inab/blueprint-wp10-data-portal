@@ -42,7 +42,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		<div class="field">
 		<?php
 			$attrs = array('any' => 'Any chromosome');
-			foreach ($chromosomes as $chro) {
+			foreach ($chromosomes as &$chro) {
 				$attrs[$chro] = 'Chromosome '.$chro;
 			}
 			echo $this->Form->label('chromosome','Chromosome',array('class' => 'normal-style'));
@@ -227,6 +227,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <th class="center aligned"><?php echo $this->Paginator->sort('pv','P-value',array('class' => 'nowrap')); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('qv','Q-value',array('class' => 'nowrap')); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('beta','Beta',array('class' => 'nowrap')); ?></th>
+	    <th>Var</th>
             <th class="center aligned"><?php echo $this->Paginator->sort('gene','Gene',array('class' => 'nowrap')); ?></th>
             <!-- <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th> -->
             <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Transcript',array('class' => 'nowrap')); ?></th>
@@ -239,8 +240,10 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         <tbody>
 	<?php
 		while(count($res['hits']['hits']) > 0):
-			foreach ($res['hits']['hits'] as $hit):
-				$h = $hit['_source'];
+			$ctl->enrichBatch($res);
+			foreach ($res['hits']['hits'] as &$hit):
+				$h = &$hit['_source'];
+				//$this->log($h,'debug');
 	?>
             <tr>
                 <td><?php
@@ -278,7 +281,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 				$dbSnpAlts = array(null);
 				$MAFs = array(null);
 			}
-			foreach($rsIds as $indexRsId => $rsId):
+			foreach($rsIds as $indexRsId => &$rsId):
 				$dbSnpRef = $dbSnpRefs[$indexRsId];
 				$dbSnpAlt = $dbSnpAlts[$indexRsId];
 				$MAF = $MAFs[$indexRsId];
@@ -340,7 +343,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			$MAFs = array(null);
 		}
 		
-		foreach($MAFs as $MAF) {
+		foreach($MAFs as &$MAF) {
 			echo $this->Html->tag('div',$MAF!==null ? $MAF : 'NA');
 		}
 		?></td>
@@ -350,12 +353,17 @@ $this->Paginator->options(array('url' => $this->passedArgs));
                 <td><?php if(isset($h['pv'])) { echo sprintf("%.4G",$h['pv']); }?></td>
                 <td><?php if(isset($h['qv'])) { echo sprintf("%.4G",$h['qv']); }?></td>
                 <td><?php if(isset($h['metrics']) && isset($h['metrics']['beta'])) { echo sprintf("%.4G",$h['metrics']['beta']); }?></td>
+		<td><?php
+			if(isset($h['variability'])) {
+				echo $this->Html->tag('i','',array('class' => 'line chart icon'));
+			}
+		?></td>
                 <td><?php
 		if(isset($h['gene_name'])):
 			$gene_names = is_array($h['gene_name']) ? $h['gene_name'] : array($h['gene_name']);
 			$ensemblGeneIds = is_array($h['ensemblGeneId']) ? $h['ensemblGeneId'] : array($h['ensemblGeneId']);
 			
-			foreach($ensemblGeneIds as $indexEns => $ensemblGeneId):
+			foreach($ensemblGeneIds as $indexEns => &$ensemblGeneId):
 				$ensemblGeneIdTrimmed = $ensemblGeneId;
 				$ensemblDotPos = strrpos($ensemblGeneIdTrimmed,'.');
 				if($ensemblDotPos) {
@@ -432,7 +440,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
                 <td><?php
 		if(isset($h['ensemblTranscriptId'])) {
 			$ensemblTranscriptIds = is_array($h['ensemblTranscriptId']) ? $h['ensemblTranscriptId'] : array($h['ensemblTranscriptId']);
-			foreach($ensemblTranscriptIds as $ensemblTranscriptId) {
+			foreach($ensemblTranscriptIds as &$ensemblTranscriptId) {
 				echo $this->Html->link(
 					$ensemblTranscriptId,
 					$ENSEMBL_BASE.'Transcript/Summary?db=core&t=' . $ensemblTranscriptId,

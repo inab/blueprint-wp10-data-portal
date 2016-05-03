@@ -1,6 +1,9 @@
 <?php
+App::uses('AppController','Controller');
+
 class QtlsController extends AppController
 {
+	public $uses = array('Qtl','Variability');
 	public $helpers = array('Html', 'Form');
 	public $components = array('Paginator');
 	
@@ -32,6 +35,7 @@ class QtlsController extends AppController
 		$elasticsearchConfig['hosts'] = $hosts;
 	}
 	$this->Qtl->setupClient($elasticsearchConfig);
+	$this->Variability->setupClient($elasticsearchConfig);
 	
 	// We get this only once!
 	$this->sortKeys = $this->Qtl->SortKeys();
@@ -113,8 +117,66 @@ class QtlsController extends AppController
 	$this->set('ctl',$this);
     }
 	
-	public function nextBatch($res) {
+	public function nextBatch(&$res) {
 		return $this->Qtl->next_scrolled_result($res);
+	}
+
+	public function enrichBatch(&$res) {
+		# Step 1: gather all the qtl_id and create a hash
+		$qtl_hash = array();
+		$anyData = false;
+		foreach ($res['hits']['hits'] as &$hit) {
+			$h = &$hit['_source'];
+			
+			# Only do it for these cases
+			if($h['qtl_source'] == 'meth' || $h['qtl_source'] == 'gene') {
+				if(!isset($qtl_hash[$h['gene_id']])) {
+					$qtl_hash[$h['gene_id']] = array();
+				}
+
+				$gene_id = &$qtl_hash[$h['gene_id']];
+
+				if(!isset($gene_id[$h['qtl_source']])) {
+					$gene_id[$h['qtl_source']] = array();
+				}
+				$qtl_source = &$gene_id[$h['qtl_source']];
+
+				$qtl_source[$h['cell_type']] = &$h;
+
+				$anyData = true;
+			}
+		}
+
+		// $this->log($qtl_hash,'debug');
+		
+		if($anyData) {
+			# Step 2: fetch them from the variation index
+			$variationData = $this->Variability->fetchVariability(null, null, array_keys($qtl_hash));
+
+			# Step 3: merge!
+			if(count($variationData['hits']['hits']) > 0) {
+				foreach($variationData['hits']['hits'] as &$var) {
+					$v = &$var['_source'];
+					
+					if(isset($qtl_hash[$v['gene_id']])) {
+						$gene_id = &$qtl_hash[$v['gene_id']];
+						if(isset($gene_id[$v['qtl_source']])) {
+							$qtl_source = &$gene_id[$v['qtl_source']];
+							if(is_array($v['cell_type'])) {
+								$cell_types = &$v['cell_type'];
+							} else {
+								$cell_types = [ $v['cell_type'] ];
+							}
+							foreach($cell_types as &$cell_type) {
+								if(isset($qtl_source[$cell_type])) {
+									$qtl_source[$cell_type]['variability'] = $v;
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	public function download() {
@@ -154,8 +216,8 @@ class QtlsController extends AppController
 				
 				$touchdown = 0;
 				while(count($res['hits']['hits']) > 0) {
-					foreach ($res['hits']['hits'] as $hit) {
-						$h = $hit['_source'];
+					foreach ($res['hits']['hits'] as &$hit) {
+						$h = &$hit['_source'];
 						if(isset($h['rsId'])) {
 							$rsIds = implode(";",$h['rsId']);
 							if(isset($h['dbSnpRef'])) {
@@ -243,15 +305,15 @@ class QtlsController extends AppController
 		fputs($csv_file,implode("\t",$header_row)."\n");
 		
 		# Here we print the data from the database by chunks
-		foreach($bulkQtlRes['hits']['hits'] as $hit) {
+		foreach($bulkQtlRes['hits']['hits'] as &$hit) {
 			$read_cell_type = $hit['_source']['cell_type'];
 			$read_qtl_source = $hit['_source']['qtl_source'];
 			$read_qtl_id = $hit['_source']['gene_id'];
 			$bulk_qtl_prefix = implode("\t",array($read_cell_type,$read_qtl_source,$read_qtl_id))."\t";
-			foreach(explode("\n",$hit['_source']['qtl_data']) as $line) {
+			foreach(explode("\n",$hit['_source']['qtl_data']) as &$line) {
 				if(strlen($line) > 0) {
-					$line = str_replace('\t',"\t",$line);
-					fputs($csv_file,$bulk_qtl_prefix.$line."\n");
+					$print_line = str_replace('\t',"\t",$line);
+					fputs($csv_file,$bulk_qtl_prefix.$print_line."\n");
 				}
 			}
 		}
