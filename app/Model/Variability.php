@@ -26,7 +26,7 @@ class Variability extends Qtl {
 		$qtl_id_key = is_array($qtl_id) ? 'terms' : 'term';
 		$mustArray[] = 	array(
 			$qtl_id_key => array(
-				'gene_id' => &$qtl_id
+				'qtl_id' => &$qtl_id
 			)
 		);
 

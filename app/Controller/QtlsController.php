@@ -130,11 +130,18 @@ class QtlsController extends AppController
 			
 			# Only do it for these cases
 			if($h['qtl_source'] == 'meth' || $h['qtl_source'] == 'gene') {
-				if(!isset($qtl_hash[$h['gene_id']])) {
-					$qtl_hash[$h['gene_id']] = array();
+				# This is needed to reconciliate lack of ensembl subversion
+				$gene_id_val = $h['gene_id'];
+				$gene_id_sep = strrpos($gene_id_val,'.');
+				if($gene_id_sep !== false) {
+					$gene_id_val = substr($gene_id_val,0,$gene_id_sep);
+				}
+				
+				if(!isset($qtl_hash[$gene_id_val])) {
+					$qtl_hash[$gene_id_val] = array();
 				}
 
-				$gene_id = &$qtl_hash[$h['gene_id']];
+				$gene_id = &$qtl_hash[$gene_id_val];
 
 				if(!isset($gene_id[$h['qtl_source']])) {
 					$gene_id[$h['qtl_source']] = array();
@@ -147,7 +154,7 @@ class QtlsController extends AppController
 			}
 		}
 
-		// $this->log($qtl_hash,'debug');
+		// $this->log(array_keys($qtl_hash),'debug');
 		
 		if($anyData) {
 			# Step 2: fetch them from the variation index
@@ -158,8 +165,8 @@ class QtlsController extends AppController
 				foreach($variationData['hits']['hits'] as &$var) {
 					$v = &$var['_source'];
 					
-					if(isset($qtl_hash[$v['gene_id']])) {
-						$gene_id = &$qtl_hash[$v['gene_id']];
+					if(isset($qtl_hash[$v['qtl_id']])) {
+						$gene_id = &$qtl_hash[$v['qtl_id']];
 						if(isset($gene_id[$v['qtl_source']])) {
 							$qtl_source = &$gene_id[$v['qtl_source']];
 							if(is_array($v['cell_type'])) {
