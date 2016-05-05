@@ -3,8 +3,8 @@ App::uses('AppController','Controller');
 
 class QtlsController extends AppController
 {
-	public $uses = array('Qtl','Variability');
-	public $helpers = array('Html', 'Form');
+	public $uses = array('Qtl','Hypervariability');
+	public $helpers = array('Html', 'Form', 'Js');
 	public $components = array('Paginator');
 	
 	private $chromosomes;
@@ -35,7 +35,7 @@ class QtlsController extends AppController
 		$elasticsearchConfig['hosts'] = $hosts;
 	}
 	$this->Qtl->setupClient($elasticsearchConfig);
-	$this->Variability->setupClient($elasticsearchConfig);
+	$this->Hypervariability->setupClient($elasticsearchConfig);
 	
 	// We get this only once!
 	$this->sortKeys = $this->Qtl->SortKeys();
@@ -158,7 +158,7 @@ class QtlsController extends AppController
 		
 		if($anyData) {
 			# Step 2: fetch them from the variation index
-			$variationData = $this->Variability->fetchVariability(null, null, array_keys($qtl_hash));
+			$variationData = $this->Hypervariability->fetchVariability(null, null, array_keys($qtl_hash));
 
 			# Step 3: merge!
 			if(count($variationData['hits']['hits']) > 0) {

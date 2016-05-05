@@ -1,7 +1,7 @@
 <?php
 App::uses('Qtl', 'Model');
 
-class Variability extends Qtl {
+class Hypervariability extends Qtl {
 	private static $BP_VARIABILITY_INDEX = 'wp10qtls_variability';
 	private static $BP_VARIABILITY_TYPE = 'qtl_variability';
 

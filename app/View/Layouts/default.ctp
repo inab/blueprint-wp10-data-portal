@@ -79,7 +79,8 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		</div>
 	</div>
 </body>
-<script>
+<?php
+echo $this->Html->scriptBlock("
 	$(document).ready(function(){
 		$('select.dropdown')
 		  .dropdown()
@@ -88,5 +89,6 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 		  .checkbox()
 		;
 	})
-</script>
+");
+?>
 </html>

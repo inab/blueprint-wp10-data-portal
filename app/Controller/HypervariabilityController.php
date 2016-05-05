@@ -1,7 +1,7 @@
 <?php
 App::uses('AppController','Controller');
 
-class VariabilityController extends AppController
+class HypervariabilityController extends AppController
 {
     public function beforeFilter(){
         parent::beforeFilter();
@@ -15,7 +15,7 @@ class VariabilityController extends AppController
 		}
 		$elasticsearchConfig['hosts'] = $hosts;
 	}
-	$this->Variability->setupClient($elasticsearchConfig);
+	$this->Hypervariability->setupClient($elasticsearchConfig);
     }
 
 	// Based on http://blog.ekini.net/2012/10/10/cakephp-2-x-csv-file-download-from-a-database-query/
@@ -25,23 +25,28 @@ class VariabilityController extends AppController
 			throw new NotFoundException(__('Invalid query parameters'));
 		}
 
-		$chartData = $this->Variability->fetchVariabilityChart($cell_type,$qtl_source,$qtl_id);
+		$chartData = $this->Hypervariability->fetchVariabilityChart($cell_type,$qtl_source,$qtl_id);
 		if($chartData === null) {
 			throw new NotFoundException(__('Variability chart not available / not found'));
 		}
-
-		$png_file = fopen('php://output', 'w');
+		
 		$filename = "variability_chart_${qtl_id}.png";
-		header('Content-type: image/png');
-		header('Content-Disposition: attachment; filename="'.$filename.'"');
-
-		fwrite($png_file,$chartData);
-
-		fclose($png_file);
-
-		$this->layout = false;
-		$this->render(false);
-		return false;
+		$this->autoRender = false;
+		$this->response->type('image/png');
+		//$this->response->download($filename);
+		$this->response->body($chartData);
+		
+		//$png_file = fopen('php://output', 'w');
+		//header('Content-type: image/png');
+		//header('Content-Disposition: attachment; filename="'.$filename.'"');
+                //
+		//fwrite($png_file,$chartData);
+                //
+		//fclose($png_file);
+                //
+		//$this->layout = false;
+		//$this->render(false);
+		//return false;
 	}
 }
 

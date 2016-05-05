@@ -25,6 +25,17 @@ $BDAP_visible_charts = array(
 
 $BDAP_normal = 'PATO:0000461';
 
+$traitAttrs = array(
+	'gene' => 'gene',
+	'exon' => 'exon',
+	'cufflinks' => 'Cufflinks',
+	'meth' => 'methylation array',
+	'sj' => 'splice junction',
+	'psi' => 'percent splice-in',
+	'K27AC' => 'H3K27AC ChIP-Seq peaks',
+	'K4ME1'=> 'H3K4ME1 ChIP-Seq peaks',
+	'sqtls' => 'sQTLseekeR'
+);
 
 $this->Html->css('blueprint-qtls',array('inline' => false));
 $this->Html->script('blueprint-qtls',array('inline' => false));
@@ -124,17 +135,6 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <div class="inline field">
 		<?php
 			$anyTrait = 'any QTL identification source';
-			$traitAttrs = array(
-				'gene' => 'gene',
-				'exon' => 'exon',
-				'cufflinks' => 'Cufflinks',
-				'meth' => 'methylation array',
-				'sj' => 'splice junction',
-				'psi' => 'percent splice-in',
-				'K27AC' => 'H3K27AC ChIP-Seq peaks',
-				'K4ME1'=> 'H3K4ME1 ChIP-Seq peaks',
-				'sqtls' => 'sQTLseekeR'
-			);
 			echo $this->Form->label('qtl_source','Show traits from',array('class' => 'normal-style'));
 			echo $this->Form->select('qtl_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
 		?>
@@ -239,10 +239,13 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         </thead>
         <tbody>
 	<?php
+		$seen_hypervar = array();
+		$rowCounter = 0;
 		while(count($res['hits']['hits']) > 0):
 			$ctl->enrichBatch($res);
 			foreach ($res['hits']['hits'] as &$hit):
 				$h = &$hit['_source'];
+				$rowCounter++;
 				//$this->log($h,'debug');
 	?>
             <tr>
@@ -355,7 +358,15 @@ $this->Paginator->options(array('url' => $this->passedArgs));
                 <td><?php if(isset($h['metrics']) && isset($h['metrics']['beta'])) { echo sprintf("%.4G",$h['metrics']['beta']); }?></td>
 		<td><?php
 			if(isset($h['variability'])) {
-				echo $this->Html->tag('i','',array('class' => 'line chart icon'));
+				$hypervar_wid = "hypervar_".$h['variability']['qtl_id'];
+				$click_hypervar_wid = "click_hypervar_".$rowCounter;
+				echo $this->Html->tag('i','',array('class' => 'link line chart blue icon','id' => $click_hypervar_wid));
+				$this->Js->get('#'.$click_hypervar_wid)->event('click',"$('#".$hypervar_wid."').modal('show');");
+				echo $this->Js->writeBuffer(); // Write cached scripts
+				if(!isset($seen_hypervar[$hypervar_wid])) {
+					echo $this->element('Hypervariability/result',array('hypervar' => &$h['variability'],'hypervar_wid' => $hypervar_wid));
+					$seen_hypervar[$hypervar_wid] = null;
+				}
 			}
 		?></td>
                 <td><?php
