@@ -40,6 +40,7 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	<div class="ui primary inverted menu">
 	  <div class="header item"><a class="blueprint-link" href="http://www.blueprint-epigenome.eu/" target="_blank"><?php echo $this->Html->image('logoblueprint.png',array('alt' => 'BLUEPRINT','class' => 'blueprint-logo'))?></a> WP10 Data Portal</div>
 	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"qtls","action"=>"index"))?>">QTLs Search</a>
+	  <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"hypervariability","action"=>"index"))?>">HVars Search</a>
 	  <div class="right menu">
 	    <div class="header item">
 	      Support

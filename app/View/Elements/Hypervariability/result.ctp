@@ -1,21 +1,18 @@
 <?php
-$ANALYSIS_NAMES = array(
-	'meth'	=> 'methylation arrays',
-	'gene'	=> 'gene expression'
-);
 $CELLTYPE_NAMES = array(
 	'neut'	=> 'neutrophils',
 	'tcel'	=> 'T cells',
 	'mono'	=> 'monocytes'
 );
 $num_cell_type = count($hypervar['cell_type']);
-$analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
+
+$analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doLarge' => true));
 ?>
 <div class="ui fullscreen modal" id="<?php echo $hypervar_wid; ?>" style="height: calc(100% - 7em);">
 	<i class="close icon"></i>
 	<div class="header" style="text-align: center;">
 		Hypervariability on <?php
-			echo isset($hypervar['gene_name']) ? $hypervar['gene_name'].' ('.$hypervar['qtl_id'].')' : $hypervar['qtl_id'];
+			echo isset($hypervar['gene_name']) ? $hypervar['gene_name'].' ('.$hypervar['hvar_id'].')' : $hypervar['hvar_id'];
 		?> in <?php
 			foreach($hypervar['cell_type'] as $icell => &$celltype) {
 				if($icell > 0) {
@@ -30,14 +27,7 @@ $analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Cell type(s)</div>
-					<?php
-					foreach($hypervar['cell_type'] as $icell => &$celltype) {
-						if($icell > 0) {
-							echo $this->Html->tag('br');
-						}
-						echo $CELLTYPE_NAMES[$celltype];
-					}
-					?>
+					<?php echo $this->element('WP10/celltype',array('h' => &$hypervar,'doLarge' => true)); ?>
 				</div>
 			</div>
 			<div class="top aligned item">
@@ -49,7 +39,7 @@ $analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Hypervariability id</div>
-					<?php echo $hypervar['qtl_id']; ?>
+					<?php echo $hypervar['hvar_id']; ?>
 				</div>
 			</div>
 			<?php if(isset($hypervar['gene_name']) || isset($hypervar['ensemblGeneId'])): ?>
@@ -79,7 +69,7 @@ $analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Probe ID</div>
-					<?php echo $hypervar['probeId'];?>
+					<?php echo $this->element('WP10/methprobe',array('h' => &$hypervar)); ?>
 				</div>
 			</div>
 			<?php endif;?>
@@ -87,7 +77,7 @@ $analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Chromosome</div>
-					<?php echo $hypervar['gene_chrom']; ?>
+					<?php echo $this->element('WP10/coordinates',array('h' => &$hypervar,'ENSEMBL_BASE' => &$ENSEMBL_BASE)); ?>
 				</div>
 			</div>
 			<?php endif;?>
@@ -103,7 +93,7 @@ $analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Position</div>
-					<?php echo $hypervar['pos']; ?>
+					<?php echo $this->element('WP10/pos',array('h' => &$hypervar)); ?>
 				</div>
 			</div>
 			<?php endif;?>
@@ -160,7 +150,7 @@ $analysis_source = $ANALYSIS_NAMES[$hypervar['qtl_source']];;
 				array(
 					is_array($hypervar['cell_type']) ? $hypervar['cell_type'][0] : $hypervar['cell_type'],
 					$hypervar['qtl_source'],
-					$hypervar['qtl_id'],
+					$hypervar['hvar_id'],
 					'controller' => 'hypervariability',
 					'action' => 'chart',
 				)

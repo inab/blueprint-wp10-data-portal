@@ -7,7 +7,7 @@ class QtlsController extends AppController
 	public $helpers = array('Html', 'Form', 'Js');
 	public $components = array('Paginator');
 	
-	private $chromosomes;
+	//private $chromosomes;
 	
 	private $sortKeys;
 	
@@ -21,7 +21,7 @@ class QtlsController extends AppController
 		'100' => '100',
 		'all' => 'all'
 	);
-
+	
     public function beforeFilter(){
         parent::beforeFilter();
 
@@ -40,20 +40,20 @@ class QtlsController extends AppController
 	// We get this only once!
 	$this->sortKeys = $this->Qtl->SortKeys();
 	
-        $chroJson = '{
-		"aggs": {
-			"chros": {
-				"terms": {
-					"field": "gene_chrom",
-					"size": 0
-				}
-			}
-		}
-        }';
-        $chromRes = $this->Qtl->search($q = $chroJson);
-        $chromosomes = array_column($chromRes['aggregations']['chros']['buckets'],'key');
-	sort($chromosomes);
-        $this->chromosomes = $chromosomes;
+        //$chroJson = '{
+	//	"aggs": {
+	//		"chros": {
+	//			"terms": {
+	//				"field": "gene_chrom",
+	//				"size": 0
+	//			}
+	//		}
+	//	}
+        //}';
+        //$chromRes = $this->Qtl->search($q = $chroJson);
+        //$chromosomes = array_column($chromRes['aggregations']['chros']['buckets'],'key');
+	//sort($chromosomes);
+        //$this->chromosomes = $chromosomes;
     }
 
     public function index() {
@@ -110,7 +110,7 @@ class QtlsController extends AppController
 	// Inspect all the named parameters to apply the filters
 	$filter = array();
 	$this->set('dHandler',$res);
-	$this->set('chromosomes',$this->chromosomes);
+	$this->set('chromosomes',$this->Qtl->availableChromosomes());
 	$this->set('filter',$filter);
 	$this->set('selectableResultsPerPage',self::$SELECTABLE_RESULTS_PER_PAGE);
 	$this->set('defaultResultsPerPage',self::$DEFAULT_RESULTS_PER_PAGE);
@@ -165,10 +165,10 @@ class QtlsController extends AppController
 				foreach($variationData['hits']['hits'] as &$var) {
 					$v = &$var['_source'];
 					
-					if(isset($qtl_hash[$v['qtl_id']])) {
-						$gene_id = &$qtl_hash[$v['qtl_id']];
-						if(isset($gene_id[$v['qtl_source']])) {
-							$qtl_source = &$gene_id[$v['qtl_source']];
+					if(isset($qtl_hash[$v['hvar_id']])) {
+						$hvar_id = &$qtl_hash[$v['hvar_id']];
+						if(isset($hvar_id[$v['qtl_source']])) {
+							$qtl_source = &$hvar_id[$v['qtl_source']];
 							if(is_array($v['cell_type'])) {
 								$cell_types = &$v['cell_type'];
 							} else {
@@ -214,7 +214,7 @@ class QtlsController extends AppController
 
 				$csv_file = fopen('php://output', 'w');
 				$datetime = new DateTime();
-				$filename = "blueprint_wp10_query_result_".$datetime->format('c').".tsv";
+				$filename = "blueprint_wp10_qtl_query_result_".$datetime->format('c').".tsv";
 				header('Content-type: text/tab-separated-values');
 				header('Content-Disposition: attachment; filename="'.$filename.'"');
 
@@ -304,7 +304,7 @@ class QtlsController extends AppController
 		}
 
 		$csv_file = fopen('php://output', 'w');
-		$filename = "${cell_type}_${qtl_source}_${qtl_id}.tsv";
+		$filename = "blueprint_wp10_bulkqtl_${cell_type}_${qtl_source}_${qtl_id}.tsv";
 		header('Content-type: text/tab-separated-values');
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 

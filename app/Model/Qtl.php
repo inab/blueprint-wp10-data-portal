@@ -275,13 +275,21 @@ class Qtl extends AppModel {
 	}
 
 	private static $SCROLL_TIME = '30s';
-
+	
+	protected function getIndex() {
+		return self::$BP_INDEX;
+	}
+	
+	protected function getTypeMapping() {
+		return self::$BP_TYPE;
+	}
+	
 	public function scrolled_search($q = null) {
 		
 		$searchParams = array(
 			'scroll' => self::$SCROLL_TIME,
-			'index' => self::$BP_INDEX,
-			'type' => self::$BP_TYPE,
+			'index' => $this->getIndex(),
+			'type' => $this->getTypeMapping(),
 			'size' => 100
 		);
 		
@@ -311,8 +319,8 @@ class Qtl extends AppModel {
 	public function search($q = null,$size = 40,$offset = null) {
 		
 		$searchParams = array(
-			'index' => self::$BP_INDEX,
-			'type' => self::$BP_TYPE,
+			'index' => $this->getIndex(),
+			'type' => $this->getTypeMapping(),
 			'size' => $size
 		);
 		
@@ -331,8 +339,8 @@ class Qtl extends AppModel {
 	public function count($q = null) {
 		
 		$countParams = array(
-			'index' => self::$BP_INDEX,
-			'type' => self::$BP_TYPE
+			'index' => $this->getIndex(),
+			'type' => $this->getTypeMapping()
 		);
 		
 		if(! empty($q)) {
@@ -342,7 +350,40 @@ class Qtl extends AppModel {
 		$res = $this->client->count($countParams);
 		return $res;
 	}
-
+	
+	protected $chromosomes;
+	
+	public function availableChromosomes() {
+		if(!isset($this->chromosomes)) {
+			$chroQuery = array(
+				'aggs' => array(
+					'chros' => array(
+						'terms' => array(
+							'field' => 'gene_chrom',
+							'size' => 0
+						)
+					)
+				)
+			);
+			#$chroJson = '{
+			#	"aggs": {
+			#		"chros": {
+			#			"terms": {
+			#				"field": "gene_chrom",
+			#				"size": 0
+			#			}
+			#		}
+			#	}
+			#}';
+			$chromRes = $this->search($q = $chroQuery);
+			$chromosomes = array_column($chromRes['aggregations']['chros']['buckets'],'key');
+			sort($chromosomes);
+			$this->chromosomes = &$chromosomes;
+		}
+		
+		return $this->chromosomes;
+	}
+	
 	public function fetchBulkQtl($cell_type,$qtl_source,$qtl_id) {
 		$searchParams = array(
 			'index' => self::$BP_BULK_INDEX,
