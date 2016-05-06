@@ -28,12 +28,6 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			echo $this->Form->label('chromosome','Chromosome',array('class' => 'normal-style'));
 			echo $this->Form->input('chromosome',array('div' => false,'empty' => $attrs['any'], 'options' => $attrs, 'label' => false, 'class' => 'ui search dropdown', 'default' => 'any'));
 		?>
-                	<div class="ui checkbox">
-			<?php
-				echo $this->Form->label('coordinates_match_snps','Match SNPs positions');
-				echo $this->Form->checkbox('coordinates_match_snps',array('hiddenField' => false));
-			?>
-			</div>
 		</div>
 		<div class="field">
 		<?php
