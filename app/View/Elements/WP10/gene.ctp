@@ -23,6 +23,9 @@ $BDAP_visible_charts = array(
 );
 
 $BDAP_normal = 'PATO:0000461';
+
+$UCSC_SERVER = 'https://genome-euro.ucsc.edu';
+$UCSC_genome = 'hg19';
 ?>
 <?php
 	if(isset($h['gene_name']) || isset($h['ensemblGeneId'])):
@@ -106,6 +109,12 @@ $BDAP_normal = 'PATO:0000461';
 					?>
 					<div class="item">
 						<a href="<?php echo 'http://blueprint-data.bsc.es/#!/'.'?'. $bdap_query; ?>" target="_blank"><?php echo $this->Html->image('BDAP-logo.png',array('alt' => 'BLUEPRINT Data Analysis Portal','title' => 'Search this gene on BLUEPRINT Data Analysis Portal','class' => 'itemlogo'))?></a>
+					</div>
+					<div class="item">
+						<a href="<?php echo $UCSC_SERVER.'/cgi-bin/hgGene'.'?'.http_build_query(array('org' => 'human', 'db' => $UCSC_genome,'hgg_gene' => $gene_names[$indexEns])); ?>" target="_blank"><?php echo $this->Html->image('UCSC-Genome-Browser-human.jpg',array('alt' => 'UCSC Genome Browser gene description','title' => "Show this gene's description from UCSC Genome Browser",'class' => 'itemlogo'))?></a>
+					</div>
+					<div class="item">
+						<a href="<?php echo $UCSC_SERVER.'/cgi-bin/hgTracks'.'?'.http_build_query(array('org' => 'human', 'db' => 'hg19','singleSearch' => 'knownCanonical','position' => $gene_names[$indexEns])); ?>" target="_blank"><?php echo $this->Html->image('UCSC-Genome-Browser-human.jpg',array('alt' => 'UCSC Genome Browser canonical transcript','title' => "Show this gene's canonical transcript on UCSC Genome Browser",'class' => 'itemlogo'))?></a>
 					</div>
 				</div>
 			</div>
