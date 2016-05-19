@@ -1,8 +1,10 @@
 <?php
 $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
+$UCSC_SERVER = 'https://genome-euro.ucsc.edu/';
+$UCSC_genome_ver = 'hg19';
 
 $traitAttrs = array(
-	'gene' => 'gene expression',
+	'gene' => 'RNA-seq data',
 	'meth' => 'methylation arrays',
 );
 
@@ -82,8 +84,8 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <div class="inline field">
 		<?php
 			$anyTrait = 'any HVar identification source';
-			echo $this->Form->label('qtl_source','Show hypervariabilities found with',array('class' => 'normal-style'));
-			echo $this->Form->select('qtl_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
+			echo $this->Form->label('hvar_source','Show hypervariabilities found with',array('class' => 'normal-style'));
+			echo $this->Form->select('hvar_source',$traitAttrs,array('class' => 'ui fluid search dropdown', 'empty' => $anyTrait, 'label' => false, 'multiple' => true));
 		?>
             </div>
         </div>
@@ -166,11 +168,12 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 	<table class="ui table">
 		<thead>
 			<th><?php echo $this->Paginator->sort('cell_type','Cell Type'); ?></th>
-			<th><?php echo $this->Paginator->sort('qtl_source','Qtl Source'); ?></th>
+			<th><?php echo $this->Paginator->sort('hvar_source','HVar Source'); ?></th>
 			<th class="center aligned"><?php echo $this->Paginator->sort('CHR','Coordinates',array('class' => 'nowrap')); ?></th>
-			<th class="center aligned"><?php echo $this->Paginator->sort('gene','Gene',array('class' => 'nowrap')); ?></th>
+			<th><?php echo $this->Paginator->sort('gene','Gene',array('class' => 'nowrap')); ?></th>
 			<th class="center aligned"><?php echo $this->Paginator->sort('array_probe','Meth probe',array('class' => 'nowrap')); ?></th>
 			<th class="center aligned"><?php echo $this->Paginator->sort('METH_pos','pos',array('class' => 'nowrap')); ?></th>
+			<th class="center aligned">QTL?</th>
 			<th class="center aligned"><i class="info circle icon" data-position="left center"></i></th>
 		</thead>
 		<tbody>
@@ -188,17 +191,37 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 				<td><?php echo $this->element('WP10/celltype',array('h' => &$h)); ?></td>
 				<td><?php echo $this->element('WP10/qtl_source',array('h' => &$h)); ?></td>
 				<td><?php echo $this->element('WP10/coordinates',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE)); ?></td>
-				<td><?php echo $this->element('WP10/gene',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE)); ?></td>
-				<td><?php echo $this->element('WP10/methprobe',array('h' => &$h)); ?></td>
+				<td><?php echo $this->element('WP10/gene_transcript',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?></td>
+				<td><?php echo $this->element('WP10/methprobe',array('h' => &$h,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?></td>
 				<td><?php echo $this->element('WP10/pos',array('h' => &$h)); ?></td>
-				<td><?php
+				<td class="center aligned"><?php
+					if(isset($h['qtl_id'])) {
+						echo $this->Html->link(
+							$this->Html->tag('i','',array('class' => 'external icon')),
+							array(
+								'controller' => 'qtls',
+								'action' => 'index',
+								'full_base' => true,
+								// Now, the parameters for the link
+								'search' => array('qtl_id' => $h['qtl_id'],'qtl_source' => $h['qtl_source'],'cell_type' => $h['cell_type'])
+							),
+							array(
+								'target' => '_blank',
+								'style' => 'font-size:0.75em;',
+								'confirm' => 'Are you sure you open the new window?',
+								'escape' => false
+							)
+						);
+					}
+				?></td>
+				<td class="center aligned"><?php
 					$hypervar_wid = "hypervar_".$h['hvar_id'];
 					$click_hypervar_wid = "click_hypervar_".$rowCounter;
 					echo $this->Html->tag('i','',array('class' => 'link line chart blue icon','id' => $click_hypervar_wid));
 					$this->Js->get('#'.$click_hypervar_wid)->event('click',"$('#".$hypervar_wid."').modal('show');");
 					echo $this->Js->writeBuffer(); // Write cached scripts
 					if(!isset($seen_hypervar[$hypervar_wid])) {
-						echo $this->element('Hypervariability/result',array('hypervar' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'hypervar_wid' => $hypervar_wid));
+						echo $this->element('Hypervariability/result',array('hypervar' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver,'hypervar_wid' => $hypervar_wid));
 						$seen_hypervar[$hypervar_wid] = null;
 					}
 				?></td>

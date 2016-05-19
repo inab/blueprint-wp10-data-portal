@@ -3,6 +3,7 @@ App::uses('AppController','Controller');
 
 class HypervariabilityController extends AppController
 {
+	public $uses = array('Hypervariability','Qtl');
 	public $helpers = array('Html', 'Form', 'Js');
 	public $components = array('Paginator');
 	
@@ -19,6 +20,13 @@ class HypervariabilityController extends AppController
 		'all' => 'all'
 	);
 	
+	private static $IMAGE_SCALES = array(
+		'small'	=>	0.25,
+		'medium'	=>	0.5,
+		'large'	=>	0.75,
+		'raw'	=>	1
+	);
+	
 	public function beforeFilter(){
 		parent::beforeFilter();
 
@@ -32,6 +40,7 @@ class HypervariabilityController extends AppController
 			$elasticsearchConfig['hosts'] = $hosts;
 		}
 		$this->Hypervariability->setupClient($elasticsearchConfig);
+		$this->Qtl->setupClient($elasticsearchConfig);
 		// We get this only once!
 		$this->sortKeys = $this->Hypervariability->SortKeys();
 	}
@@ -103,6 +112,73 @@ class HypervariabilityController extends AppController
 	
 	public function enrichBatch(&$res) {
 		// Just now, a no-op
+		# Step 1: gather all the hvar_id and create a hash
+		$hvar_hash = array();
+		$anyData = false;
+		foreach ($res['hits']['hits'] as &$hit) {
+			$h = &$hit['_source'];
+			
+			# This is needed to reconciliate lack of ensembl subversion
+			$hvar_id_val = $h['hvar_id'];
+			$hvar_id_sep = strrpos($hvar_id_val,'.');
+			if($hvar_id_sep !== false) {
+				$hvar_id_val = substr($hvar_id_val,0,$hvar_id_sep);
+			}
+			
+			if(!isset($hvar_hash[$hvar_id_val])) {
+				$hvar_hash[$hvar_id_val] = array();
+			}
+
+			$hvar_id = &$hvar_hash[$hvar_id_val];
+
+			if(!isset($hvar_id[$h['qtl_source']])) {
+				$hvar_id[$h['qtl_source']] = array();
+			}
+			$qtl_source = &$hvar_id[$h['qtl_source']];
+			
+			if(is_array($h['cell_type'])) {
+				$cell_types = &$h['cell_type'];
+			} else {
+				$cell_types = [ $h['cell_type'] ];
+			}
+			
+			foreach($cell_types as &$cell_type_name) {
+				$qtl_source[$cell_type_name] = &$h;
+			}
+
+			$anyData = true;
+		}
+
+		// $this->log(array_keys($qtl_hash),'debug');
+		
+		if($anyData) {
+			# Step 2: fetch them from the variation index
+			$qtlData = $this->Qtl->fetchQTLs(null, null, array_keys($hvar_hash));
+
+			# Step 3: merge!
+			if(count($qtlData['hits']['hits']) > 0) {
+				foreach($qtlData['hits']['hits'] as &$var) {
+					$v = &$var['_source'];
+					
+					# This is needed to reconciliate lack of ensembl subversion
+					$qtl_id_val = $v['gene_id'];
+					$qtl_id_sep = strrpos($qtl_id_val,'.');
+					if($qtl_id_sep !== false) {
+						$qtl_id_val = substr($qtl_id_val,0,$qtl_id_sep);
+					}
+					
+					if(isset($hvar_hash[$qtl_id_val])) {
+						$gene_id = &$hvar_hash[$qtl_id_val];
+						if(isset($gene_id[$v['qtl_source']])) {
+							$qtl_source = &$gene_id[$v['qtl_source']];
+							if(isset($qtl_source[$v['cell_type']])) {
+								$qtl_source[$v['cell_type']]['qtl_id'] = $v['gene_id'];
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	
 	public function download() {
@@ -185,20 +261,47 @@ class HypervariabilityController extends AppController
 	
 	// Based on http://blog.ekini.net/2012/10/10/cakephp-2-x-csv-file-download-from-a-database-query/
 	public function chart($cell_type = null,$qtl_source = null,$hvar_id = null) {
-		$hvar_id = strtr($hvar_id,'_',':');
 		if(!$cell_type || !$qtl_source || !$hvar_id) {
 			throw new NotFoundException(__('Invalid query parameters'));
 		}
-
+		
+		$underPos = strrpos($hvar_id,'_');
+		if($underPos!==false) {
+			$imgCommand = substr($hvar_id,$underPos+1);
+			
+			if(array_key_exists($imgCommand,self::$IMAGE_SCALES)) {
+				$hvar_id = substr(strtr($hvar_id,'_',':'),0,$underPos);
+				$imgScale = self::$IMAGE_SCALES[$imgCommand];
+			} else {
+				throw new NotFoundException(__('Hypervariability chart not available / not found'));
+			}
+		}
+		
 		$chartData = $this->Hypervariability->fetchVariabilityChart($cell_type,$qtl_source,$hvar_id);
 		if($chartData === null) {
 			throw new NotFoundException(__('Hypervariability chart not available / not found'));
 		}
 		
-		$filename = "variability_chart_${hvar_id}.png";
+		$filename = "variability_chart_${hvar_id}";
+		if(isset($imgCommand)) {
+			$filename .= "_" . $imgCommand;
+			
+			if($imgScale!==1) {
+				$imagick = new Imagick();
+				$imagick->readImageBlob($chartData);
+				$imagick->scaleImage(round($imagick->getImageWidth() * $imgScale),round($imagick->getImageHeight() * $imgScale),true);
+				$chartData = $imagick->getImageBlob();
+			}
+		}
+		$filename .= ".png";
 		$this->autoRender = false;
 		$this->response->type('image/png');
-		//$this->response->download($filename);
+		$this->response->cache('-1 minute', '+7 days');
+		$this->response->sharable(true,3600);
+		$this->response->expires('+7 days');
+		if(!isset($imgCommand)) {
+			$this->response->download($filename);
+		}
 		$this->response->body($chartData);
 		
 		//$png_file = fopen('php://output', 'w');

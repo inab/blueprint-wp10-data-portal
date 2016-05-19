@@ -46,22 +46,7 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Gene</div>
-					<?php
-					if(isset($hypervar['gene_name'])) {
-						echo $hypervar['gene_name'];
-					}
-					if(isset($hypervar['ensemblGeneId'])) {
-						if(isset($hypervar['gene_name'])) {
-							echo ' (';
-						}
-						
-						echo $hypervar['ensemblGeneId'];
-						
-						if(isset($hypervar['gene_name'])) {
-							echo ')';
-						}
-					}
-					?>
+					<?php echo $this->element('WP10/gene_transcript',array('h' => &$hypervar,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?>
 				</div>
 			</div>
 			<?php endif;?>
@@ -69,7 +54,7 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 			<div class="top aligned item">
 				<div class="content">
 					<div class="header">Probe ID</div>
-					<?php echo $this->element('WP10/methprobe',array('h' => &$hypervar)); ?>
+					<?php echo $this->element('WP10/methprobe',array('h' => &$hypervar,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?>
 				</div>
 			</div>
 			<?php endif;?>
@@ -131,7 +116,7 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 			<?php if(isset($hypervar['variability']) && count($hypervar['variability']) > 0): ?>
 			<div class="top aligned item">
 				<div class="content">
-					<div class="header">Variability</div>
+					<div class="header">Variability associated with</div>
 					<?php
 						foreach($hypervar['variability'] as $iVari => &$variability) {
 							if($iVari > 0) {
@@ -146,6 +131,17 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 		</div>
 		<div style="height: calc(100% - 7em);width: calc(100% - 2em);text-align:center;">
 			<?php
+			$imageRoute = Router::url(
+				array(
+					is_array($hypervar['cell_type']) ? $hypervar['cell_type'][0] : $hypervar['cell_type'],
+					$hypervar['qtl_source'],
+					$hypervar['hvar_id'].'_small',
+					'controller' => 'hypervariability',
+					'action' => 'chart',
+				)
+			);
+			echo $this->Html->div('div-image','',array("style" => "background-image: url('$imageRoute');"));
+			/*
 			echo $this->Html->image(
 				array(
 					is_array($hypervar['cell_type']) ? $hypervar['cell_type'][0] : $hypervar['cell_type'],
@@ -159,6 +155,7 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 					"style" => "max-width:100%;max-height:100%;"
 				)
 			);
+			*/
 			?>
 		</div>
 		<!--
@@ -175,6 +172,26 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 		Nope
 		</div>
 	-->
+		<?php
+		echo $this->Html->tag('br');
+		echo $this->Html->link(
+			$this->Html->tag('i','',array('class' => 'download icon')).'download full resolution chart',
+			array(
+				is_array($hypervar['cell_type']) ? $hypervar['cell_type'][0] : $hypervar['cell_type'],
+				$hypervar['qtl_source'],
+				$hypervar['hvar_id'],
+				'controller' => 'hypervariability',
+				'action' => 'chart',
+			)
+			,
+			array(
+				'target' => '_blank',
+				'style' => 'font-size:0.75em;',
+				'confirm' => 'Are you sure you wish to download this chart?',
+				'escape' => false
+			)
+		);
+		?>
 		<div class="ui blue deny right labeled icon button">
 			Return
 			<i class="reply icon"></i>

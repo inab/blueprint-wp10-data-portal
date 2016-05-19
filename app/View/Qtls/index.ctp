@@ -1,5 +1,7 @@
 <?php
 $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
+$UCSC_SERVER = 'https://genome-euro.ucsc.edu/';
+$UCSC_genome_ver = 'hg19';
 
 $traitAttrs = array(
 	'gene' => 'gene',
@@ -21,9 +23,11 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 <div class="sixteen wide column">
     <div class="hidden section divider"></div>
     <h1 class="ui header">WP10 QTLs Search</h1>
+    <?php if(!isset($this->passedArgs['search']) || !isset($this->passedArgs['search']['qtl_id']) || strlen($this->passedArgs['search']['qtl_id']) == 0): ?>
     <div class="ui secondary form segment">
 	<?php
 		echo $this->Form->create();
+		echo $this->Form->hidden('qtl_id');
 	?>
         <div class="three fields">
 		<div class="field">
@@ -137,6 +141,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
         </div>
         <?php echo $this->Form->end(); ?>
     </div>
+    <?php endif; ?>
 </div>
 <?php
 	if(isset($dHandler['hits']) || isset($dHandler['_scroll_id'])):
@@ -203,7 +208,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
             <th class="center aligned"><?php echo $this->Paginator->sort('pv','P-value',array('class' => 'nowrap')); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('qv','Q-value',array('class' => 'nowrap')); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('beta','Beta',array('class' => 'nowrap')); ?></th>
-	    <th>HV</th>
+	    <th class="center aligned">HVar?</th>
             <th class="center aligned"><?php echo $this->Paginator->sort('gene','Gene',array('class' => 'nowrap')); ?></th>
             <!-- <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th> -->
             <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Transcript',array('class' => 'nowrap')); ?></th>
@@ -314,7 +319,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
                 <td><?php if(isset($h['pv'])) { echo sprintf("%.4G",$h['pv']); }?></td>
                 <td><?php if(isset($h['qv'])) { echo sprintf("%.4G",$h['qv']); }?></td>
                 <td><?php if(isset($h['metrics']) && isset($h['metrics']['beta'])) { echo sprintf("%.4G",$h['metrics']['beta']); }?></td>
-		<td><?php
+		<td class="center aligned"><?php
 			if(isset($h['variability'])) {
 				$hypervar_wid = "hypervar_".$h['variability']['hvar_id'];
 				$click_hypervar_wid = "click_hypervar_".$rowCounter;
@@ -322,32 +327,14 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 				$this->Js->get('#'.$click_hypervar_wid)->event('click',"$('#".$hypervar_wid."').modal('show');");
 				echo $this->Js->writeBuffer(); // Write cached scripts
 				if(!isset($seen_hypervar[$hypervar_wid])) {
-					echo $this->element('Hypervariability/result',array('hypervar' => &$h['variability'],'ENSEMBL_BASE' => &$ENSEMBL_BASE,'hypervar_wid' => $hypervar_wid));
+					echo $this->element('Hypervariability/result',array('hypervar' => &$h['variability'],'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver,'hypervar_wid' => $hypervar_wid));
 					$seen_hypervar[$hypervar_wid] = null;
 				}
 			}
 		?></td>
-                <td><?php echo $this->element('WP10/gene',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE)); ?></td>
-		<!-- <td><?php if(isset($h['exonNumber'])) { echo $h['exonNumber']; }?></td> -->
-                <td><?php
-		if(isset($h['ensemblTranscriptId'])) {
-			$ensemblTranscriptIds = is_array($h['ensemblTranscriptId']) ? $h['ensemblTranscriptId'] : array($h['ensemblTranscriptId']);
-			foreach($ensemblTranscriptIds as &$ensemblTranscriptId) {
-				echo $this->Html->link(
-					$ensemblTranscriptId,
-					$ENSEMBL_BASE.'Transcript/Summary?db=core&t=' . $ensemblTranscriptId,
-					array(
-						'target' => '_blank'
-					)
-				);
-				echo $this->Html->tag('br');
-			}
-		}
-		?></td>
-		<!--
-                <td><?php if(isset($h['histone'])) { echo $this->Html->tag('span',$h['histone']); }?></td>
-		-->
-                <td><?php echo $this->element('WP10/methprobe',array('h' => &$h)); ?></td>
+                <td><?php echo $this->element('WP10/gene_transcript',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?></td>
+                <td><?php echo $this->element('WP10/gene_transcript',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver,'isTranscript' => true)); ?></td>
+                <td><?php echo $this->element('WP10/methprobe',array('h' => &$h,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?></td>
 		<td>
 			<!--
 			<i class="link info circle blue icon" data-position="left center"></i>
@@ -365,7 +352,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			if(isset($h['probeId'])) {
 				echo $this->Html->div('item',$this->Html->div('ui horizonal label','Probe Id').$this->Html->link(
 					$h['probeId'],
-					'http://genome-euro.ucsc.edu/cgi-bin/hgTracks?clade=mammal&org=Human&db=hg19&position=' . $h['probeId'],
+					$UCSC_SERVER.'cgi-bin/hgTracks?clade=mammal&org=Human&db='.$UCSC_genome_ver.'&position=' . $h['probeId'],
 					array(
 						'target' => '_blank'
 					)

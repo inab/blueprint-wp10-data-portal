@@ -2,7 +2,7 @@
 if(isset($h['probeId'])) {
 	echo $this->Html->link(
 		$h['probeId'],
-		'http://genome-euro.ucsc.edu/cgi-bin/hgTracks'.'?'.http_build_query(array('clade' => 'mammal','org' => 'Human','db' => 'hg19','position' => $h['probeId'])),
+		$UCSC_SERVER.'cgi-bin/hgTracks'.'?'.http_build_query(array('clade' => 'mammal','org' => 'Human','db' => $UCSC_genome_ver,'position' => $h['probeId'])),
 		array(
 			'target' => '_blank'
 		)

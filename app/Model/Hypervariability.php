@@ -7,7 +7,7 @@ class Hypervariability extends Qtl {
 	
 	private static $SORT_CRITERIA = array(
 		'cell_type' => array('cell_type'),
-		'qtl_source' => array('qtl_source'),
+		'hvar_source' => array('qtl_source'),
 		'id' => array('hvar_id'),
 		'CHR' => array('gene_chrom','gene_start','gene_end'),
 		//'CHR' => array('gene_chrom',array('pos','gene_start'),'gene_end'),
@@ -106,7 +106,7 @@ class Hypervariability extends Qtl {
 								)
 							);
 							break;
-						case "qtl_source":
+						case "hvar_source":
 							$andFilters[] = array(
 								'terms' => array(
 									'qtl_source' => $value
@@ -199,7 +199,7 @@ class Hypervariability extends Qtl {
 		return $query;
 	}
 	
-	public function fetchVariability($cell_type,$qtl_source,$hvar_id) {
+	public function fetchVariability($cell_type,$hvar_source,$hvar_id) {
 		$mustArray = array();
 		if($cell_type != null) {
 			$mustArray[] = array(
@@ -209,10 +209,10 @@ class Hypervariability extends Qtl {
 			);
 		}
 
-		if($qtl_source != null) {
+		if($hvar_source != null) {
 			$mustArray[] = array(
 				'term' => array(
-					'qtl_source' => $qtl_source
+					'qtl_source' => $hvar_source
 				)
 			);
 		}
@@ -227,7 +227,7 @@ class Hypervariability extends Qtl {
 		$searchParams = array(
 			'index' => self::$BP_VARIABILITY_INDEX,
 			'type' => self::$BP_VARIABILITY_TYPE,
-			'size' => 10,
+			'size' => 10*(is_array($hvar_id) ? count($hvar_id) : 1),
 			'body' => array(
 				'query' => array(
 					'filtered' => array(
@@ -246,8 +246,8 @@ class Hypervariability extends Qtl {
 		return $res;
 	}
 
-	public function fetchVariabilityChart($cell_type,$qtl_source,$hvar_id) {
-		$varRes = $this->fetchVariability($cell_type,$qtl_source,$hvar_id);
+	public function fetchVariabilityChart($cell_type,$hvar_source,$hvar_id) {
+		$varRes = $this->fetchVariability($cell_type,$hvar_source,$hvar_id);
 
 		return ($varRes['hits']['total'] > 0) ? base64_decode($varRes['hits']['hits'][0]['_source']['associated_chart']) : null;
 	}

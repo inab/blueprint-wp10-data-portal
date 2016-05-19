@@ -14,7 +14,7 @@ class Qtl extends AppModel {
 	private static $SORT_CRITERIA = array(
 		'cell_type' => array('cell_type'),
 		'qtl_source' => array('qtl_source'),
-		'id' => array('gene_id'),
+		'qtl_id' => array('gene_id'),
 		'SNP' => array('snp_id'),
 		'MAF' => array('MAF'),
 		'beta' => array('metrics' => 'beta'),
@@ -123,16 +123,33 @@ class Qtl extends AppModel {
 							$all_fdrs = $value;
 							break;
 						case "qtl_source":
+							if(is_array($value)) {
+								$array_value = &$value;
+							} else {
+								$array_value = [ $value ];
+							}
 							$andFilters[] = array(
 								'terms' => array(
-									'qtl_source' => $value
+									'qtl_source' => $array_value
+								)
+							);
+							break;
+						case "qtl_id":
+							$andFilters[] = array(
+								'term' => array(
+									'gene_id' => $value
 								)
 							);
 							break;
 						case "cell_type":
+							if(is_array($value)) {
+								$array_value = &$value;
+							} else {
+								$array_value = [ $value ];
+							}
 							$andFilters[] = array(
 								'terms' => array(
-									'cell_type' => $value
+									'cell_type' => $array_value
 								)
 							);
 							break;
@@ -384,6 +401,57 @@ class Qtl extends AppModel {
 		return $this->chromosomes;
 	}
 	
+	public function fetchQTLs($cell_type,$qtl_source,$qtl_id) {
+		$mustArray = array();
+		if($cell_type != null) {
+			$mustArray[] = array(
+				'term' => array(
+					'cell_type' => $cell_type
+				)
+			);
+		}
+
+		if($qtl_source != null) {
+			$mustArray[] = array(
+				'term' => array(
+					'qtl_source' => $qtl_source
+				)
+			);
+		}
+		
+		if(is_array($qtl_id)) {
+			$qtl_id_key = &$qtl_id;
+		} else {
+			$qtl_id_key = [ $qtl_id ];
+		}
+		$mustArray[] = 	array(
+			'prefix' => array(
+				'gene_id' => &$qtl_id_key
+			)
+		);
+
+		$searchParams = array(
+			'index' => self::$BP_INDEX,
+			'type' => self::$BP_TYPE,
+			'size' => 10*count($qtl_id_key),
+			'body' => array(
+				'query' => array(
+					'filtered' => array(
+						'filter' => array(
+							'bool' => array(
+								'must' => &$mustArray
+							)
+						)
+					)
+				)
+			)
+		);
+		
+		$res = $this->client->search($searchParams);
+
+		return $res;
+	}
+
 	public function fetchBulkQtl($cell_type,$qtl_source,$qtl_id) {
 		$searchParams = array(
 			'index' => self::$BP_BULK_INDEX,

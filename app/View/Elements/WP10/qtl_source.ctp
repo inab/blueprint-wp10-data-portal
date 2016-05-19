@@ -11,5 +11,10 @@ $ANALYSIS_NAMES = array(
 	'sqtls' => 'sQTLseekeR'
 );
 
-echo $this->Html->tag('span',isset($doLarge) ? $ANALYSIS_NAMES[$h['qtl_source']] : $h['qtl_source']);
+$ANALYSIS_NAMES_HVAR = array(
+	'gene' => 'RNA-seq data',
+	'meth' => 'methylation arrays'
+);
+
+echo $this->Html->tag('span',isset($doLarge) ? ( isset($h['hvar_id']) ? $ANALYSIS_NAMES_HVAR[$h['qtl_source']] : $ANALYSIS_NAMES[$h['qtl_source']]) : $h['qtl_source']);
 ?>

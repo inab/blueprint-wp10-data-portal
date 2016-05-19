@@ -5,6 +5,7 @@
     },
     "require": {
 	"php": "~5.5",
+	"ext-imagick": "*",
         "elasticsearch/elasticsearch": "~2.0",
         "components/jquery": "^2.1",
         "semantic/ui": "^2.1.8"
