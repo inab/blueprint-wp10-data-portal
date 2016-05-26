@@ -227,7 +227,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			foreach ($res['hits']['hits'] as &$hit):
 				$h = &$hit['_source'];
 				$rowCounter++;
-				$this->log($h,'debug');
+				//$this->log($h,'debug');
 	?>
             <tr>
                 <td><?php echo $this->element('WP10/celltype',array('h' => &$h)); ?></td>
