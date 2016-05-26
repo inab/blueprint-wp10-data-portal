@@ -404,17 +404,19 @@ class Qtl extends AppModel {
 	public function fetchQTLs($cell_type,$qtl_source,$qtl_id) {
 		$mustArray = array();
 		if($cell_type != null) {
+			$cell_type_search_operand = is_array($cell_type) ? 'terms' : 'term';
 			$mustArray[] = array(
-				'term' => array(
-					'cell_type' => $cell_type
+				$cell_type_search_operand => array(
+					'cell_type' => &$cell_type
 				)
 			);
 		}
 
 		if($qtl_source != null) {
+			$qtl_source_search_operand = is_array($qtl_source) ? 'terms' : 'term';
 			$mustArray[] = array(
-				'term' => array(
-					'qtl_source' => $qtl_source
+				$qtl_source_search_operand => array(
+					'qtl_source' => &$qtl_source
 				)
 			);
 		}
@@ -433,7 +435,7 @@ class Qtl extends AppModel {
 		$searchParams = array(
 			'index' => self::$BP_INDEX,
 			'type' => self::$BP_TYPE,
-			'size' => 10*count($qtl_id_key),
+			'size' => 100000,
 			'body' => array(
 				'query' => array(
 					'filtered' => array(

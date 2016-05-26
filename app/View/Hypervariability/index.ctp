@@ -3,10 +3,11 @@ $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
 $UCSC_SERVER = 'https://genome-euro.ucsc.edu/';
 $UCSC_genome_ver = 'hg19';
 
-$traitAttrs = array(
-	'gene' => 'RNA-seq data',
-	'meth' => 'methylation arrays',
-);
+// This must be given by the controller
+//$traitAttrs = array(
+//	'gene' => 'RNA-seq data',
+//	'meth' => 'methylation arrays',
+//);
 
 $this->Html->css('blueprint-qtls',array('inline' => false));
 $this->Html->script('blueprint-qtls',array('inline' => false));

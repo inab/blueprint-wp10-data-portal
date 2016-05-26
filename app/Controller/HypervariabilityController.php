@@ -27,6 +27,11 @@ class HypervariabilityController extends AppController
 		'raw'	=>	1
 	);
 	
+	private static $TRAIT_ATTRS = array(
+		'gene' => 'RNA-seq data',
+		'meth' => 'methylation arrays',
+	);
+	
 	public function beforeFilter(){
 		parent::beforeFilter();
 
@@ -100,6 +105,7 @@ class HypervariabilityController extends AppController
 		$filter = array();
 		$this->set('dHandler',$res);
 		$this->set('chromosomes',$this->Hypervariability->availableChromosomes());
+		$this->set('traitAttrs',self::$TRAIT_ATTRS);
 		$this->set('filter',$filter);
 		$this->set('selectableResultsPerPage',self::$SELECTABLE_RESULTS_PER_PAGE);
 		$this->set('defaultResultsPerPage',self::$DEFAULT_RESULTS_PER_PAGE);
@@ -149,12 +155,12 @@ class HypervariabilityController extends AppController
 			$anyData = true;
 		}
 
-		// $this->log(array_keys($qtl_hash),'debug');
+		//$this->log(array_keys($hvar_hash),'debug');
 		
 		if($anyData) {
 			# Step 2: fetch them from the variation index
-			$qtlData = $this->Qtl->fetchQTLs(null, null, array_keys($hvar_hash));
-
+			$qtlData = $this->Qtl->fetchQTLs(null, array_keys(self::$TRAIT_ATTRS), array_keys($hvar_hash));
+			
 			# Step 3: merge!
 			if(count($qtlData['hits']['hits']) > 0) {
 				foreach($qtlData['hits']['hits'] as &$var) {
