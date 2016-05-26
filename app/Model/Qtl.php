@@ -422,15 +422,35 @@ class Qtl extends AppModel {
 		}
 		
 		if(is_array($qtl_id)) {
-			$qtl_id_key = &$qtl_id;
+			$qtl_id_keys = &$qtl_id;
 		} else {
-			$qtl_id_key = [ $qtl_id ];
+			$qtl_id_keys = [ $qtl_id ];
 		}
-		$mustArray[] = 	array(
-			'prefix' => array(
-				'gene_id' => &$qtl_id_key
+		$shouldArray = array(
+			array(
+				'terms' => array(
+					'gene_id' => &$qtl_id_keys
+				)
 			)
 		);
+		foreach($qtl_id_keys as &$qtl_id_key) {
+			$shouldArray[] = array(
+				'prefix' => array(
+					'gene_id' => $qtl_id_key
+				)
+			);
+		}
+		$mustArray[] = array(
+			'bool' => array(
+				'should' => &$shouldArray
+			)
+		);
+		
+		//array(
+		//	'prefix' => array(
+		//		'gene_id' => &$qtl_id_keys
+		//	)
+		//);
 
 		$searchParams = array(
 			'index' => self::$BP_INDEX,
