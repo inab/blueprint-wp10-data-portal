@@ -4,6 +4,10 @@ $CELLTYPE_NAMES = array(
 	'tcel'	=> 'T cells',
 	'mono'	=> 'monocytes'
 );
+$IMAGE_POSTFIX = array(
+	'gene'	=>	'medium',
+	'meth'	=>	'small'
+);
 $num_cell_type = count($hypervar['cell_type']);
 
 $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doLarge' => true));
@@ -131,11 +135,12 @@ $analysis_source = $this->element('WP10/qtl_source',array('h' => &$hypervar,'doL
 		</div>
 		<div style="height: calc(100% - 7em);width: calc(100% - 2em);text-align:center;">
 			<?php
+			$imagePostFix = array_key_exists($hypervar['qtl_source'],$IMAGE_POSTFIX) ? '_'.$IMAGE_POSTFIX[$hypervar['qtl_source']] : '';
 			$imageRoute = Router::url(
 				array(
 					is_array($hypervar['cell_type']) ? $hypervar['cell_type'][0] : $hypervar['cell_type'],
 					$hypervar['qtl_source'],
-					$hypervar['hvar_id'].'_small',
+					$hypervar['hvar_id'].$imagePostFix,
 					'controller' => 'hypervariability',
 					'action' => 'chart',
 				)
