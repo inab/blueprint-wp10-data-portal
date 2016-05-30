@@ -3,3 +3,5 @@
 
 Configure::write('elasticsearch','http://localhost:9200');
 
+// Uncomment this on the WP10 production portal
+// Configure::write('debug', 0);
