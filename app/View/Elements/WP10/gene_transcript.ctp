@@ -136,6 +136,15 @@ $BDAP_normal = 'PATO:0000461';
 					
 					<?php if(!isset($isTranscript)): ?>
 					<div class="item">
+						<a href="<?php echo 'http://www.gtexportal.org/home/gene/'.$names[$indexEns]; ?>" target="_blank"><?php echo $this->Html->image('GTEx_v2_logo_trans.png',array('alt' => 'GTEx gene page','title' => "Show the GTEx gene page",'class' => 'itemlogo'))?></a>
+					</div>
+					<div class="item">
+						<a href="<?php echo 'http://www.gtexportal.org/home/browseEqtls'.'?'.http_build_query(array('location' => $names[$indexEns])); ?>" target="_blank"><?php echo $this->Html->image('GTEx_v2_logo_trans.png',array('alt' => 'GTEx gene eQTL visualizer','title' => "Show this gene on GTEx gene eQTL visualizer",'class' => 'itemlogo'))?></a>
+					</div>
+					<div class="item">
+						<a href="<?php echo 'http://www.gtexportal.org/home/eqtls/byGene'.'?'.http_build_query(array('geneId' => $names[$indexEns], 'tissueName' => 'All')); ?>" target="_blank"><?php echo $this->Html->image('GTEx_v2_logo_trans.png',array('alt' => 'GTEx gene eQTL results','title' => "Show this gene on GTEx gene eQTL",'class' => 'itemlogo'))?></a>
+					</div>
+					<div class="item">
 						<a href="<?php echo $UCSC_SERVER.'cgi-bin/hgGene'.'?'.http_build_query(array('org' => 'human', 'db' => $UCSC_genome_ver,'hgg_gene' => $names[$indexEns])); ?>" target="_blank"><?php echo $this->Html->image('UCSC-Genome-Browser-human.jpg',array('alt' => 'UCSC Genome Browser gene description','title' => "Show this gene's description from UCSC Genome Browser",'class' => 'itemlogo'))?></a>
 					</div>
 					<div class="item">

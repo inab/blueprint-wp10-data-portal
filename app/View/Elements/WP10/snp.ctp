@@ -69,6 +69,9 @@ if(isset($h['snp_id'])) {
 				<div class="item">
 					<a href="<?php echo 'http://ensembl.org/Homo_sapiens/Variation/Explore'.'?'. http_build_query(array('v' => $rsId)); ?>" target="_blank"><?php echo $this->Html->image('EnsEMBL.png',array('alt' => 'EnsEMBL Variation','title' => 'Search this SNP on EnsEMBL Variation','class' => 'itemlogo'))?></a>
 				</div>
+				<div class="item">
+					<a href="<?php echo 'http://www.gtexportal.org/home/eqtls/bySnp'.'?'.http_build_query(array('snpId' => $rsId, 'tissueName' => 'All')); ?>" target="_blank"><?php echo $this->Html->image('GTEx_v2_logo_trans.png',array('alt' => 'GTEx SNP eQTL results','title' => "Show this SNP on GTEx SNP eQTL",'class' => 'itemlogo'))?></a>
+				</div>
 			</div>
 		</div>
 	</div>
