@@ -375,3 +375,4 @@ $this->Paginator->options(array('url' => $this->passedArgs));
     </div>
 </div>
 <?php endif; ?>
+<div class="bibref"><u>Reference</u>: <a href="http://www.cell.com/cell/abstract/S0092-8674(16)31446-5" target="_blank">Chen L., Ge B., Casale F.P., Vasquez L., Kwan T., Garrido-Martín D., Watt S., Yan Y., Kundu K., Ecker S., et al. (2016) Genetic Drivers of Epigenetic and Transcriptional Variation in Human Immune Cells. Cell, 167, 1398–1414.e24</a><br /><u>DOI</u>: <a href="http://dx.doi.org/10.1016%2Fj.cell.2016.10.026" target="_blank">10.1016/j.cell.2016.10.026</a></div>
