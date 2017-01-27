@@ -258,4 +258,4 @@ $this->Paginator->options(array('url' => $this->passedArgs));
     </div>
 </div>
 <?php endif; ?>
-<div class="bibref"><u>Reference</u>: <a href="http://biorxiv.org/content/early/2016/10/26/083246" target="_blank">Ecker S., Chen L., Pancaldi V., Bagger F.O., Fernandez J.M., Pau E.C. de S., Juan D., Mann A., Watt S., Casale F.P., et al. (2016) Genome-wide Analysis of Differential Transcriptional and Epigenetic Variability Across Human Immune Cell Types. bioRxiv, 83246.</a><br /><u>DOI</u>: <a href="http://dx.doi.org/10.1101%2F083246" target="_blank">10.1101/083246</a></div>
+<div class="bibref"><u>Reference</u>: <a href="http://genomebiology.biomedcentral.com/articles/10.1186/s13059-017-1156-8" target="_blank">Ecker S., Chen L., Pancaldi V., Bagger F.O., Fernández J.M., Pau E.C. de S., Juan D., Mann A., Watt S., Casale F.P., et al. (2016) Genome-wide Analysis of Differential Transcriptional and Epigenetic Variability Across Human Immune Cell Types. Genome Biology 2017 18:18.</a><br /><u>DOI</u>: <a href="http://dx.doi.org/10.1186%2Fs13059-017-1156-8" target="_blank">10.1186/s13059-017-1156-8</a></div>
