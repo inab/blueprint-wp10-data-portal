@@ -1,3 +1,9 @@
+<div style="width:100%; text-align:center;">
+<h2>BLUEPRINT WP10 QTLs Database is under maintenance for several days<br />Sorry for the inconvenience</h2>
+<div>Supporting data is available at <a href="ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/" target="_blank">ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/</a></div>
+</div>
+
+<!--
 <?php
 $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
 $UCSC_SERVER = 'https://genome-euro.ucsc.edu/';
@@ -375,4 +381,5 @@ $this->Paginator->options(array('url' => $this->passedArgs));
     </div>
 </div>
 <?php endif; ?>
+-->
 <div class="bibref"><u>Reference</u>: <a href="http://www.cell.com/cell/abstract/S0092-8674(16)31446-5" target="_blank">Chen L., Ge B., Casale F.P., Vasquez L., Kwan T., Garrido-Martín D., Watt S., Yan Y., Kundu K., Ecker S., et al. (2016) Genetic Drivers of Epigenetic and Transcriptional Variation in Human Immune Cells. Cell, 167, 1398–1414.e24</a><br /><u>DOI</u>: <a href="http://dx.doi.org/10.1016%2Fj.cell.2016.10.026" target="_blank">10.1016/j.cell.2016.10.026</a></div>
