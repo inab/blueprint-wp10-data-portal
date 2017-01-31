@@ -1,5 +1,5 @@
 <div style="width:100%; text-align:center;">
-<h2>BLUEPRINT WP10 QTLs Database is under maintenance for several days<br />Sorry for the inconvenience</h2>
+<h2>BLUEPRINT WP10 QTLs Data Portal is offline for several days due database maintentance<br />Sorry for the inconvenience</h2>
 <div>Supporting data is available at <a href="ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/" target="_blank">ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/</a></div>
 </div>
 
