@@ -53,9 +53,11 @@ if(isset($h['snp_id'])) {
 
 	echo $this->Html->div('item center aligned',$this->Html->div('ui blue horizontal large label','SNP Id: '.$rsStr));
 	echo $this->Html->div('item nowrap',$this->Html->div('ui horizontal label','WP10 snp_id').$this->Html->tag('span',$h['snp_id']));
+	echo $this->Html->div('item nowrap',$this->Html->div('ui horizontal label','WP10 Ref / Alt').$this->Html->tag('span',$h['snpRef'].' / '.$h['snpAlt']));
+	echo $this->Html->div('item nowrap',$this->Html->div('ui horizontal label','WP10 Alt AF').$this->Html->tag('span',$h['altAF']));
 	if($dbSnpRef !== null) {
-		echo $this->Html->div('item',$this->Html->div('ui horizontal label','Ref / Alt').$this->Html->tag('span',$dbSnpRef.' / '.$dbSnpAlt));
-		echo $this->Html->div('item',$this->Html->div('ui horizontal label','MAF<br><span style="font-size: 50%">(from dbSNP)</span>').$this->Html->tag('span',$MAF===null ? 'NA' : $MAF));
+		echo $this->Html->div('item',$this->Html->div('ui horizontal label','dbSNP Ref / Alt').$this->Html->tag('span',$dbSnpRef.' / '.$dbSnpAlt));
+		echo $this->Html->div('item',$this->Html->div('ui horizontal label','dbSNP MAF<br><span style="font-size: 50%">(from dbSNP)</span>').$this->Html->tag('span',$MAF===null ? 'NA' : $MAF));
 	}
 ?>
 			</div>

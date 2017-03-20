@@ -147,8 +147,11 @@ class QtlsController extends AppController
 					$gene_id[$h['qtl_source']] = array();
 				}
 				$qtl_source = &$gene_id[$h['qtl_source']];
-
-				$qtl_source[$h['cell_type']] = &$h;
+				
+				if(!array_key_exists($h['cell_type'],$qtl_source)) {
+					$qtl_source[$h['cell_type']] = array();
+				}
+				$qtl_source[$h['cell_type']][] = &$h;
 
 				$anyData = true;
 			}
@@ -176,7 +179,9 @@ class QtlsController extends AppController
 							}
 							foreach($cell_types as &$cell_type) {
 								if(isset($qtl_source[$cell_type])) {
-									$qtl_source[$cell_type]['variability'] = $v;
+									foreach($qtl_source[$cell_type] as &$qS) {
+										$qS['variability'] = $v;
+									}
 								}
 							}
 						}
@@ -218,7 +223,7 @@ class QtlsController extends AppController
 				header('Content-type: text/tab-separated-values');
 				header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-				$header_row = array('# '.'cell_type','qtl_source','qtl_id','chromosome','chromosome_start','chromosome_end','snp_id','pos','rs_id(s)','REF(s)','ALT(s)','MAF(s)','p-bonferroni','q-value(FDR)','overlapped gene(s)','overlapped EnsEMBL Gene Id(s)','overlapped EnsEMBL Transcript Id(s)','exon_number','methylation_probe_id','histone','splice junctions','F','metrics');
+				$header_row = array('# '.'an_group','cell_type','qtl_source','qtl_id','chromosome','chromosome_start','chromosome_end','snp_id','pos','alt_allele_frequency','rs_id(s)','REF(s)','ALT(s)','MAF(s)','p-bonferroni','FDR','overlapped gene(s)','overlapped EnsEMBL Gene Id(s)','exon_number','methylation_probe_id','histone','splice junctions','metrics');
 				fputs($csv_file,implode("\t",$header_row)."\n");
 				
 				$touchdown = 0;
@@ -237,12 +242,13 @@ class QtlsController extends AppController
 								$MAFs = '';
 							}
 						} else {
-							$rsIds = substr($h['rsId'],0,2) == 'rs' ? $h['rsId'] : '';
+							$rsIds = '';
 							$REFs = '';
 							$ALTs = '';
 							$MAFs = '';
 						}
 						$qtl_line = implode("\t",array(
+							$h['an_group'],
 							$h['cell_type'],
 							$h['qtl_source'],
 							$h['gene_id'],
@@ -251,20 +257,19 @@ class QtlsController extends AppController
 							$h['gene_end'],
 							$h['snp_id'],
 							isset($h['pos']) ? $h['pos'] : '',
+							$h['altAF'],
 							$rsIds,
 							$REFs,
 							$ALTs,
 							$MAFs,
 							$h['pv'],
-							$h['qv'],
+							$h['metrics']['FDR'],
 							isset($h['gene_name']) ? (is_array($h['gene_name']) ? implode(";",$h['gene_name']) : $h['gene_name']) : '',
 							isset($h['ensemblGeneId']) ? (is_array($h['ensemblGeneId']) ? implode(";",$h['ensemblGeneId']) : $h['ensemblGeneId']) : '',
-							isset($h['ensemblTranscriptId']) ? (is_array($h['ensemblTranscriptId']) ? implode(";",$h['ensemblTranscriptId']) : $h['ensemblTranscriptId']) : '',
 							isset($h['exonNumber']) ? $h['exonNumber'] : '',
 							isset($h['probeId']) ? $h['probeId'] : '',
 							isset($h['histone']) ? $h['histone'] : '',
 							isset($h['splice']) ? (is_array($h['splice']) ? implode(";",$h['splice']) : $h['splice']) : '',
-							isset($h['F']) ? isset($h['F']) : '',
 							json_encode($h['metrics'])
 						));
 
@@ -292,23 +297,26 @@ class QtlsController extends AppController
 	}
 
 	// Based on http://blog.ekini.net/2012/10/10/cakephp-2-x-csv-file-download-from-a-database-query/
-	public function bulkqtl($cell_type = null,$qtl_source = null,$qtl_id = null) {
+	public function bulkqtl($an_group = null,$cell_type = null,$qtl_source = null,$qtl_id = null) {
 		$qtl_id = strtr($qtl_id,'_',':');
-		if(!$cell_type || !$qtl_source || !$qtl_id) {
+		if(!$an_group || !$cell_type || !$qtl_source || !$qtl_id) {
 			throw new NotFoundException(__('Invalid query parameters'));
 		}
 
-		$bulkQtlRes = $this->Qtl->fetchBulkQtl($cell_type,$qtl_source,$qtl_id);
+		$bulkQtlRes = $this->Qtl->fetchBulkQtl($an_group,$cell_type,$qtl_source,$qtl_id);
 		if($bulkQtlRes['hits']['total'] == 0) {
 			throw new NotFoundException(__('QTL not found'));
 		}
 
 		$csv_file = fopen('php://output', 'w');
-		$filename = "blueprint_wp10_bulkqtl_${cell_type}_${qtl_source}_${qtl_id}.tsv";
+		$filename = "blueprint_wp10_bulkqtl_${an_group}_${cell_type}_${qtl_source}_${qtl_id}.tsv";
 		header('Content-type: text/tab-separated-values');
 		header('Content-Disposition: attachment; filename="'.$filename.'"');
 
-		$header_row = array('# '.'cell_type','qtl_source','qtl_id','rsid','pos','p_value','beta','p-bonferroni','q-value(FDR)');
+		$header_row = array('# '.'cell_type','qtl_source','qtl_id','snp','rsid','p_value','beta','Bonferroni_p_value','FDR','alt_allele_frequency');
+		if($an_group == 'WP10') {
+			$header_row[] = 'std_error_of_beta';
+		}
 		fputs($csv_file,implode("\t",$header_row)."\n");
 		
 		# Here we print the data from the database by chunks

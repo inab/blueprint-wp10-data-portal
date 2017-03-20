@@ -1,24 +1,21 @@
 <div style="width:100%; text-align:center;">
-<h2>BLUEPRINT WP10 QTLs Data Portal is offline for several days due database maintentance<br />Sorry for the inconvenience</h2>
-<div>Supporting data is available at <a href="ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/" target="_blank">ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/</a></div>
-</div>
 
-<!--
 <?php
+// <h2>BLUEPRINT WP10 QTLs Data Portal is offline for several days due database maintentance<br />Sorry for the inconvenience</h2>
 $ENSEMBL_BASE = 'http://jan2013.archive.ensembl.org/Homo_sapiens/';
 $UCSC_SERVER = 'https://genome-euro.ucsc.edu/';
 $UCSC_genome_ver = 'hg19';
 
 $traitAttrs = array(
 	'gene' => 'gene',
-	'exon' => 'exon',
-	'cufflinks' => 'Cufflinks',
+//	'exon' => 'exon',
+//	'cufflinks' => 'Cufflinks',
 	'meth' => 'methylation array',
-	'sj' => 'splice junction',
+//	'sj' => 'splice junction',
 	'psi' => 'percent splice-in',
 	'K27AC' => 'H3K27AC ChIP-Seq peaks',
 	'K4ME1'=> 'H3K4ME1 ChIP-Seq peaks',
-	'sqtls' => 'sQTLseekeR'
+//	'sqtls' => 'sQTLseekeR'
 );
 
 $this->Html->css('blueprint-qtls',array('inline' => false));
@@ -99,12 +96,14 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			echo $this->Form->input('fdr_cutoff',array('type' => 'number','div' => false,'lang' => 'en','min'=> '0.0', 'max' => '1.0', 'step' => 'any', 'label' => false, 'placeholder'=>'FDR cutoff (e.g. 0.01, 1e-8)'));
 		?>
 		</div>
+		<!--
 		<div class="ui toggle checkbox">
 		<?php
 			echo $this->Form->checkbox('all_fdrs');
 			echo $this->Form->label('all_fdrs','All FDRs');
 		?>
 		</div>
+		-->
             </div>
             <div class="inline field">
 		<?php
@@ -205,20 +204,22 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 	</div>
     <table class="ui table">
         <thead>
+            <th><?php echo $this->Paginator->sort('an_group','Analysis Group'); ?></th>
             <th><?php echo $this->Paginator->sort('cell_type','Cell Type'); ?></th>
             <th><?php echo $this->Paginator->sort('qtl_source','Qtl Source'); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('CHR','Coordinates',array('class' => 'nowrap')); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('SNP_pos','SNP',array('class' => 'nowrap')); ?></th>
+	    <th class="center aligned"><?php echo $this->Paginator->sort('altAF','Alt AF',array('class' => 'nowrap')); ?></th>
 	    <th class="center aligned"><?php echo $this->Paginator->sort('MAF','MAF',array('class' => 'nowrap')); ?></th>
 	    <th class="center aligned"><?php echo $this->Paginator->sort('SNP_pos','pos',array('class' => 'nowrap')); ?></th>
-            <th class="center aligned"><?php echo $this->Paginator->sort('pv','P-value',array('class' => 'nowrap')); ?></th>
-            <th class="center aligned"><?php echo $this->Paginator->sort('qv','Q-value',array('class' => 'nowrap')); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('pv','P-value (Bonferroni)'); ?></th>
+            <th class="center aligned"><?php echo $this->Paginator->sort('FDR','FDR',array('class' => 'nowrap')); ?></th>
             <th class="center aligned"><?php echo $this->Paginator->sort('beta','Beta',array('class' => 'nowrap')); ?></th>
 	    <th class="center aligned">HVar?</th>
             <th class="center aligned"><?php echo $this->Paginator->sort('gene','Gene',array('class' => 'nowrap')); ?></th>
             <!-- <th><?php echo $this->Paginator->sort('exon_number','Exon #'); ?></th> -->
-            <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Transcript',array('class' => 'nowrap')); ?></th>
 		<!--
+            <th><?php echo $this->Paginator->sort('ensembl_transcript_id','Transcript',array('class' => 'nowrap')); ?></th>
             <th><?php echo $this->Paginator->sort('histone','Histone'); ?></th>
 		-->
 		<th><?php echo $this->Paginator->sort('array_probe','Meth probe',array('class' => 'nowrap')); ?></th>
@@ -236,10 +237,12 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 				//$this->log($h,'debug');
 	?>
             <tr>
+                <td><?php if(isset($h['an_group'])) { echo $h['an_group']; }?></td>
                 <td><?php echo $this->element('WP10/celltype',array('h' => &$h)); ?></td>
                 <td><?php echo $this->element('WP10/qtl_source',array('h' => &$h)); ?></td>
                 <td><?php echo $this->element('WP10/coordinates',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE)); ?></td>
                 <td class="center aligned"><?php echo $this->element('WP10/snp',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE)); ?></td>
+                <td><?php if(isset($h['altAF'])) { echo sprintf("%.4G",$h['altAF']); }?></td>
 		<td><?php
 		if(isset($h['dbSnpRef'])) {
 			$dbSnpRefs = $h['dbSnpRef'];
@@ -257,7 +260,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 		?></td>
 		<td><?php echo $this->element('WP10/pos',array('h' => &$h)); ?></td>
                 <td><?php if(isset($h['pv'])) { echo sprintf("%.4G",$h['pv']); }?></td>
-                <td><?php if(isset($h['qv'])) { echo sprintf("%.4G",$h['qv']); }?></td>
+                <td><?php if(isset($h['metrics']) && isset($h['metrics']['FDR'])) { echo sprintf("%.4G",$h['metrics']['FDR']); }?></td>
                 <td><?php if(isset($h['metrics']) && isset($h['metrics']['beta'])) { echo sprintf("%.4G",$h['metrics']['beta']); }?></td>
 		<td class="center aligned"><?php
 			if(isset($h['variability'])) {
@@ -273,7 +276,9 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			}
 		?></td>
                 <td><?php echo $this->element('WP10/gene_transcript',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?></td>
+		<!--
                 <td><?php echo $this->element('WP10/gene_transcript',array('h' => &$h,'ENSEMBL_BASE' => &$ENSEMBL_BASE,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver,'isTranscript' => true)); ?></td>
+		-->
                 <td><?php echo $this->element('WP10/methprobe',array('h' => &$h,'UCSC_SERVER' => &$UCSC_SERVER,'UCSC_genome_ver' => &$UCSC_genome_ver)); ?></td>
 		<td>
 			<!--
@@ -305,7 +310,10 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 },$splice))));
 			}
 			$metrics = array();
-			if(isset($h['pv'])) {
+			if(isset($h['metrics'])) {
+				$metrics += $h['metrics'];
+			}
+			if(! isset($metrics['pv']) && isset($h['pv'])) {
 				$metrics['pv'] = $h['pv'];
 			}
 			if(isset($h['qv'])) {
@@ -313,9 +321,6 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 			}
 			if(isset($h['F'])) {
 				$metrics['F'] = $h['F'];
-			}
-			if(isset($h['metrics'])) {
-				$metrics += $h['metrics'];
 			}
 			if(!empty($metrics)) {
 				echo $this->Html->div('item',$this->Html->div('ui label','All Metrics').
@@ -337,7 +342,7 @@ $this->Paginator->options(array('url' => $this->passedArgs));
 						'action' => 'bulkqtl',
 						'full_base' => true,
 						// Now, the parameters for the link
-						$h['cell_type'],$h['qtl_source'],strtr($qtlId,':','_')
+						$h['an_group'],$h['cell_type'],$h['qtl_source'],strtr($qtlId,':','_')
 					),
 					array(
 						'target' => '_blank',
@@ -381,5 +386,6 @@ $this->Paginator->options(array('url' => $this->passedArgs));
     </div>
 </div>
 <?php endif; ?>
--->
+<div>Supporting data is available at <a href="ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/" target="_blank">ftp://ftp.ebi.ac.uk/pub/databases/blueprint/blueprint_Epivar/</a></div>
+</div>
 <div class="bibref"><u>Reference</u>: <a href="http://www.cell.com/cell/abstract/S0092-8674(16)31446-5" target="_blank">Chen L., Ge B., Casale F.P., Vasquez L., Kwan T., Garrido-Martín D., Watt S., Yan Y., Kundu K., Ecker S., et al. (2016) Genetic Drivers of Epigenetic and Transcriptional Variation in Human Immune Cells. Cell, 167, 1398–1414.e24</a><br /><u>DOI</u>: <a href="http://dx.doi.org/10.1016%2Fj.cell.2016.10.026" target="_blank">10.1016/j.cell.2016.10.026</a></div>

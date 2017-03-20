@@ -9,14 +9,18 @@ class Qtl extends AppModel {
 	private static $BP_BULK_INDEX = 'wp10bulkqtls';
 	private static $BP_BULK_TYPE = 'bulkqtl';
 	
-	private static $fdrFields = array('pv','qv');
+	//private static $fdrFields = array('pv','qv');
+	private static $fdrFields = array('FDR');
 	
 	private static $SORT_CRITERIA = array(
 		'cell_type' => array('cell_type'),
 		'qtl_source' => array('qtl_source'),
 		'qtl_id' => array('gene_id'),
 		'SNP' => array('snp_id'),
+		'altAF' => array('altAF'),
 		'MAF' => array('MAF'),
+		'an_group' => array('an_group'),
+		'FDR' => array('metrics' => 'FDR'),
 		'beta' => array('metrics' => 'beta'),
 		'CHR' => array('gene_chrom','gene_start','gene_end'),
 		'SNP_pos' => array('gene_chrom','pos'),
@@ -474,7 +478,7 @@ class Qtl extends AppModel {
 		return $res;
 	}
 
-	public function fetchBulkQtl($cell_type,$qtl_source,$qtl_id) {
+	public function fetchBulkQtl($an_group,$cell_type,$qtl_source,$qtl_id) {
 		$searchParams = array(
 			'index' => self::$BP_BULK_INDEX,
 			'type' => self::$BP_BULK_TYPE,
@@ -485,6 +489,11 @@ class Qtl extends AppModel {
 						'filter' => array(
 							'bool' => array(
 								'must' => array(
+									array(
+										'term' => array(
+											'an_group' => $an_group
+										)
+									),
 									array(
 										'term' => array(
 											'cell_type' => $cell_type
