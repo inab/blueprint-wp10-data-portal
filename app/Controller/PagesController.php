@@ -58,7 +58,6 @@ class PagesController extends AppController {
 		try {
 			$this->render(implode('/', $path));
 		} catch (MissingViewException $e) {
-				echo $e->getMessage();
 			if (Configure::read('debug')) {
 				throw $e;
 			}
