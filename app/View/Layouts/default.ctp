@@ -48,6 +48,9 @@ $cakeVersion = __d('cake_dev', 'CakePHP %s', Configure::version())
 	    <a class="item" style="visibility:hidden;" href="<?php echo $this->Html->Url(array("controller"=>"pages","action"=>"faqs"))?>" target="_blank">
 	      FAQs
 	    </a>
+	    <a class="item" href="<?php echo $this->Html->Url(array("controller"=>"pages","action"=>"related"))?>" target="_blank">
+	      Related data
+	    </a>
 	    <a class="item" href="mailto:bp-wp10-portal@lists.cnio.es?subject=BLUEPRINT WP10 Data Portal Support">
 	      E-mail Support
 	    </a>
